@@ -33,7 +33,7 @@
     }
     .gallery img:hover{ transform:scale(1.03) }
 
-    /* Beställningskort – smalare och renare */
+    /* Beställningskort */
     .card{
       background:var(--card); border-radius:12px; margin:18px auto;
       box-shadow:0 2px 10px rgba(0,0,0,.06);
@@ -43,7 +43,7 @@
     .row{ display:flex; flex-direction:column; gap:6px; margin:12px 0 }
     label{ font-weight:600; font-size:.95rem }
     input, select, textarea{
-      width:100%; font-size:16px; /* undviker iOS-zoom */
+      width:100%; font-size:16px; 
       padding:10px 12px; border:1px solid #ddd; border-radius:10px; background:#fafafa;
     }
     textarea{ min-height:70px; resize:vertical }
@@ -99,7 +99,7 @@
     </section>
 
     <section class="card">
-      <h2>Beställning</h2>
+      <h2>Beställ via WhatsApp</h2>
 
       <!-- Antal med + / – och fritt textfält -->
       <div class="row">
@@ -142,7 +142,8 @@
       </div>
 
       <p style="text-align:center; color:#666; font-size:.95rem; margin-top:8px">
-        När du trycker på knappen öppnas WhatsApp med ett färdigt meddelande – du behöver bara skicka.
+        När du trycker på knappen öppnas WhatsApp med ett färdigt meddelande – du behöver bara skicka.<br>
+        <strong>Leverans eller avhämtning kommer vi överens om i WhatsApp.</strong>
       </p>
     </section>
 
@@ -174,17 +175,14 @@
     const priceEl = document.getElementById('priceTag');
     const waBtn   = document.getElementById('waBtn');
 
-    // Hjälp: hämta giltigt antal (kan vara tomt under redigering)
     function parseQty() {
       const v = qtyEl.value.trim();
       if (v === "") return NaN;
       const n = parseInt(v, 10);
       return Number.isFinite(n) ? n : NaN;
     }
-
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-    // Uppdatera prisrad + knappläge
     function refreshUI(){
       const q = parseQty();
       if (!Number.isFinite(q) || q < 1){
@@ -196,7 +194,6 @@
       }
     }
 
-    // Tillåt tomt fält när man skriver; klampa först när man lämnar fältet
     qtyEl.addEventListener('input', refreshUI);
     qtyEl.addEventListener('blur', () => {
       let q = parseQty();
@@ -206,7 +203,6 @@
       refreshUI();
     });
 
-    // + / – knappar
     minusEl.addEventListener('click', () => {
       let q = parseQty();
       if (!Number.isFinite(q)) q = 1;
@@ -222,10 +218,8 @@
       qtyEl.dispatchEvent(new Event('input'));
     });
 
-    // Startläge
     refreshUI();
 
-    // Bygg WhatsApp-meddelande
     function buildMessage(q){
       const color = colorEl.value.trim();
       const buyer = nameEl.value.trim();
@@ -239,11 +233,11 @@
       if (buyer) lines.push(`Namn: ${buyer}`);
       if (note)  lines.push(`Meddelande: ${note}`);
       lines.push("");
+      lines.push("Leverans eller avhämtning kommer vi överens om här i chatten. 🕯️");
       lines.push("Skickat via hemsidan ✅");
       return lines.join("\n");
     }
 
-    // Öppna WhatsApp
     waBtn.addEventListener('click', () => {
       const q = parseQty();
       if (!Number.isFinite(q) || q < 1){ return; }
