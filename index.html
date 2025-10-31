@@ -24,6 +24,8 @@
     }
     p {
       font-size: 1.2em;
+      margin: 10px auto;
+      max-width: 800px;
     }
     .gallery {
       display: flex;
@@ -44,6 +46,30 @@
     .gallery img:hover {
       transform: scale(1.05);
     }
+    .about {
+      background-color: #fff;
+      margin: 40px auto;
+      padding: 25px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 700px;
+    }
+    .contact-button {
+      display: inline-block;
+      background-color: #ffca70;
+      color: #333;
+      padding: 12px 25px;
+      border-radius: 25px;
+      font-size: 1.1em;
+      text-decoration: none;
+      margin-top: 20px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .contact-button:hover {
+      background-color: #ffd98e;
+      transform: scale(1.05);
+    }
     footer {
       margin-top: 40px;
       padding: 15px;
@@ -57,7 +83,7 @@
 
   <header>
     <h1>Lukas säljer ljuslyktor</h1>
-    <p>Vackra 3D printade lyktor för LED-ljus – endast 5 € styck inklusive LED ljus!</p>
+    <p>Vackra 3D-printade lyktor för LED-ljus – endast 5 € styck inklusive LED-ljus!</p>
   </header>
 
   <section class="gallery">
@@ -66,13 +92,23 @@
     <img src="Ljuslykta3.jpg" alt="Ljuslykta 3">
   </section>
 
+  <section class="about">
+    <h2>Om Lukas</h2>
+    <p>
+      Hej! Jag heter Lukas och jag älskar att skapa saker med min 3D-skrivare.
+      Varje ljuslykta designar och tillverkar jag själv, med noggrannhet och kreativitet.
+      Materialet är miljövänligt PLA, och varje lykta har sitt eget unika mönster och stil.
+    </p>
+    <p>
+      Mina lyktor passar perfekt för LED-ljus och ger ett varmt och mysigt sken.
+      De är också en fin present till familj eller vänner – och kostar bara 5 € styck!
+    </p>
+    <a class="contact-button" href="mailto:lukas@example.com">Kontakta mig</a>
+  </section>
+
   <footer>
-    © 2025 Lukas | 3D printade ljuslyktor för LED-ljus
+    © 2025 Lukas | 3D-printade ljuslyktor för LED-ljus | Handgjorda i Finland
   </footer>
 
 </body>
 </html>
-
-
-
-
