@@ -5,255 +5,253 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lukas Ljuslyktor</title>
   <style>
-    body {
+    :root{
+      --bg:#f7f7f7; --card:#ffffff; --ink:#333; --muted:#666;
+      --brand:#ffe7b3; --pill:#fff7e2; --pill-b:#f1d07a;
+      --wa:#25D366;
+    }
+    *{box-sizing:border-box}
+    body{
       font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      line-height: 1.6;
+      background:var(--bg); color:var(--ink);
+      margin:0; text-align:center; line-height:1.55;
     }
-    header {
-      background-color: #ffe7b3;
-      padding: 20px 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    header{
+      background:var(--brand); padding:20px 12px;
+      box-shadow:0 2px 5px rgba(0,0,0,.08);
     }
-    h1 {
-      margin: 0;
-      color: #444;
+    h1{margin:0; color:#444; font-size:1.6rem}
+    p.lead{max-width:720px; margin:8px auto 0; font-size:1rem}
+    .wrap{max-width:960px; margin:0 auto; padding:16px}
+    .gallery{
+      display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin:20px auto;
     }
-    p {
-      font-size: 1.1em;
-      margin: 10px auto;
-      max-width: 800px;
+    .gallery img{
+      width:260px; height:260px; object-fit:cover;
+      border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,.12);
+      transition:transform .2s ease;
     }
-    .gallery {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin: 30px auto;
-      gap: 20px;
-      max-width: 900px;
-    }
-    .gallery img {
-      width: 280px;
-      height: 280px;
-      object-fit: cover;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      transition: transform 0.2s ease;
-    }
-    .gallery img:hover {
-      transform: scale(1.05);
-    }
+    .gallery img:hover{ transform:scale(1.03) }
 
-    /* Beställningskort */
-    .order {
-      background: #fff;
-      margin: 35px auto;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      max-width: 720px;
-      text-align: left;
+    /* Beställningskort – smalare och renare */
+    .card{
+      background:var(--card); border-radius:12px; margin:18px auto;
+      box-shadow:0 2px 10px rgba(0,0,0,.06);
+      padding:18px; text-align:left; max-width:560px;
     }
-    .order h2 {
-      margin-top: 0;
-      text-align: center;
-      color: #444;
+    .card h2{ margin:0 0 10px; text-align:center; color:#444; font-size:1.3rem }
+    .row{ display:flex; flex-direction:column; gap:6px; margin:12px 0 }
+    label{ font-weight:600; font-size:.95rem }
+    input, select, textarea{
+      width:100%; font-size:16px; /* undviker iOS-zoom */
+      padding:10px 12px; border:1px solid #ddd; border-radius:10px; background:#fafafa;
     }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      align-items: center;
-      gap: 12px;
-      margin: 10px 0;
-    }
-    .row label { font-weight: bold; }
-    .row input[type="number"],
-    .row input[type="text"],
-    .row select,
-    .row textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 1em;
-      background: #fafafa;
-    }
-    .row textarea { min-height: 70px; resize: vertical; }
-    .price-line {
-      text-align: center;
-      margin-top: 12px;
-      font-weight: bold;
-      background: #fff7e2;
-      border: 2px solid #f1d07a;
-      display: inline-block;
-      padding: 8px 16px;
-      border-radius: 20px;
-    }
-    .actions {
-      text-align: center;
-      margin-top: 16px;
-    }
-    .btn {
-      display: inline-block;
-      padding: 12px 22px;
-      border-radius: 28px;
-      text-decoration: none;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    .btn-wa {
-      background: #25D366; /* WhatsApp-grön */
-      color: #fff;
-      box-shadow: 0 3px 8px rgba(37,211,102,0.4);
-    }
-    .btn-wa:hover { transform: translateY(-1px); }
-    footer {
-      margin-top: 40px;
-      padding: 15px;
-      background-color: #eee;
-      color: #555;
-      font-size: 0.9em;
-      text-align: center;
-    }
+    textarea{ min-height:70px; resize:vertical }
 
-    /* Mobiljustering */
-    @media (max-width: 640px) {
-      .row { grid-template-columns: 1fr; }
-      .order { padding: 16px; }
+    /* Antalskontroll */
+    .qty-control{
+      display:flex; align-items:center; gap:8px;
+    }
+    .qty-control input{
+      text-align:center; max-width:120px; flex:0 0 120px;
+      padding:10px 8px;
+    }
+    .qty-btn{
+      border:none; background:#eee; color:#222; font-weight:700;
+      width:40px; height:40px; border-radius:10px; cursor:pointer;
+      transition:transform .1s ease, box-shadow .1s ease;
+    }
+    .qty-btn:active{ transform:scale(.97) }
+    .price-line{
+      text-align:center; margin-top:8px; font-weight:700;
+      background:var(--pill); border:2px solid var(--pill-b);
+      display:inline-block; padding:8px 16px; border-radius:20px;
+    }
+    .actions{ text-align:center; margin-top:14px }
+    .btn{
+      display:inline-block; padding:12px 22px; border-radius:28px; font-weight:700;
+      text-decoration:none; border:none; cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+    }
+    .btn-wa{ background:var(--wa); color:#fff; box-shadow:0 3px 8px rgba(37,211,102,.35) }
+    .btn:hover{ transform:translateY(-1px) }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; box-shadow:none }
+
+    footer{ margin:30px 0 18px; color:var(--muted); font-size:.9rem }
+
+    @media (max-width:640px){
+      .gallery img{ width:220px; height:220px }
+      .card{ padding:16px; border-radius:12px }
     }
   </style>
 </head>
 <body>
-
   <header>
     <h1>Lukas säljer ljuslyktor</h1>
-    <p>Vackra 3D-printade lyktor för LED-ljus – endast 5 € styck inklusive LED-ljus!</p>
+    <p class="lead">Vackra 3D-printade lyktor för LED-ljus – endast 5 € styck inklusive LED-ljus!</p>
   </header>
 
-  <section class="gallery">
-    <img src="Ljuslykta1.jpg" alt="Ljuslykta 1">
-    <img src="Ljuslykta2.jpg" alt="Ljuslykta 2">
-    <img src="Ljuslykta3.jpg" alt="Ljuslykta 3">
-  </section>
+  <div class="wrap">
+    <section class="gallery">
+      <img src="Ljuslykta1.jpg" alt="Ljuslykta 1">
+      <img src="Ljuslykta2.jpg" alt="Ljuslykta 2">
+      <img src="Ljuslykta3.jpg" alt="Ljuslykta 3">
+    </section>
 
-  <section class="order">
-    <h2>Beställning</h2>
+    <section class="card">
+      <h2>Beställning</h2>
 
-    <div class="row">
-      <label for="qty">Antal lyktor</label>
-      <input id="qty" type="number" min="1" max="99" value="1" inputmode="numeric" />
-    </div>
+      <!-- Antal med + / – och fritt textfält -->
+      <div class="row">
+        <label for="qty">Antal lyktor</label>
+        <div class="qty-control">
+          <button class="qty-btn" id="minus" aria-label="Minska antal">−</button>
+          <input id="qty" type="number" min="1" max="99" inputmode="numeric" placeholder="Ange antal">
+          <button class="qty-btn" id="plus" aria-label="Öka antal">+</button>
+        </div>
+      </div>
 
-    <div class="row">
-      <label for="color">Färg</label>
-      <select id="color">
-        <option value="">Valfri / mix</option>
-        <option>Vit</option>
-        <option>Svart</option>
-        <option>Beige</option>
-        <option>Koppar</option>
-        <option>Guld</option>
-      </select>
-    </div>
+      <div class="row">
+        <label for="color">Färg</label>
+        <select id="color">
+          <option value="">Valfri / mix</option>
+          <option>Vit</option>
+          <option>Svart</option>
+          <option>Beige</option>
+          <option>Koppar</option>
+          <option>Guld</option>
+        </select>
+      </div>
 
-    <div class="row">
-      <label for="name">Ditt namn</label>
-      <input id="name" type="text" placeholder="För- och efternamn (frivilligt)">
-    </div>
+      <div class="row">
+        <label for="name">Ditt namn</label>
+        <input id="name" type="text" placeholder="För- och efternamn (frivilligt)">
+      </div>
 
-    <div class="row">
-      <label for="note">Meddelande</label>
-      <textarea id="note" placeholder="Önskemål (t.ex. blandade färger, avhämtningstid) – frivilligt"></textarea>
-    </div>
+      <div class="row">
+        <label for="note">Meddelande</label>
+        <textarea id="note" placeholder="Önskemål (t.ex. blandade färger, avhämtningstid) – frivilligt"></textarea>
+      </div>
 
-    <div style="text-align:center">
-      <span class="price-line" id="priceTag">Summa: 5 €</span>
-    </div>
+      <div style="text-align:center">
+        <span class="price-line" id="priceTag">Summa: –</span>
+      </div>
 
-    <div class="actions">
-      <button id="waBtn" class="btn btn-wa">Beställ via WhatsApp</button>
-    </div>
-    <p style="text-align:center; font-size:0.95em; color:#666; margin-top:8px;">
-      När du trycker på knappen öppnas WhatsApp med ett färdigt meddelande – du behöver bara skicka.
-    </p>
-  </section>
+      <div class="actions">
+        <button id="waBtn" class="btn btn-wa" disabled>Beställ via WhatsApp</button>
+      </div>
 
-  <section class="about" style="max-width:700px;margin:0 auto 20px auto;">
-    <h2>Om Lukas</h2>
-    <p>
-      Hej! Jag heter Lukas och jag älskar att skapa saker med min 3D-skrivare.
-      Varje ljuslykta designar och tillverkar jag själv i hållbart PLA-material.
-      De passar perfekt för LED-ljus och ger ett varmt och mysigt sken – en fin present för bara 5 € styck!
-    </p>
-  </section>
+      <p style="text-align:center; color:#666; font-size:.95rem; margin-top:8px">
+        När du trycker på knappen öppnas WhatsApp med ett färdigt meddelande – du behöver bara skicka.
+      </p>
+    </section>
+
+    <section class="card" style="text-align:center">
+      <h2>Om Lukas</h2>
+      <p>
+        Hej! Jag heter Lukas och jag 3D-printar varje ljuslykta själv i hållbart PLA-material.
+        De passar perfekt för LED-ljus och ger ett varmt, mysigt sken – en fin present för bara 5 € styck!
+      </p>
+    </section>
+  </div>
 
   <footer>
     © 2025 Lukas | 3D-printade ljuslyktor för LED-ljus | Handgjorda i Finland
   </footer>
 
   <script>
-    // ======= Konfiguration =======
-    const PRICE_EUR = 5; // pris per lykta
-    const WHATSAPP_NUMBER = "358505298881"; 
-    // Exempel Finland: "358401234567" (utan + och mellanslag)
+    // ========= Konfiguration =========
+    const PRICE_EUR = 5;
+    const WHATSAPP_NUMBER = "358505298881"; // ex: 358401234567
 
-    // ======= Element =======
-    const qtyEl = document.getElementById('qty');
+    // ========= Element =========
+    const qtyEl   = document.getElementById('qty');
+    const minusEl = document.getElementById('minus');
+    const plusEl  = document.getElementById('plus');
     const colorEl = document.getElementById('color');
-    const nameEl = document.getElementById('name');
-    const noteEl = document.getElementById('note');
-    const priceTag = document.getElementById('priceTag');
-    const waBtn = document.getElementById('waBtn');
+    const nameEl  = document.getElementById('name');
+    const noteEl  = document.getElementById('note');
+    const priceEl = document.getElementById('priceTag');
+    const waBtn   = document.getElementById('waBtn');
 
-    // ======= Prisuppdatering =======
-    function updatePrice() {
-      const q = Math.max(1, parseInt(qtyEl.value || "1", 10));
-      const total = q * PRICE_EUR;
-      priceTag.textContent = `Summa: ${total} €`;
-      qtyEl.value = q;
+    // Hjälp: hämta giltigt antal (kan vara tomt under redigering)
+    function parseQty() {
+      const v = qtyEl.value.trim();
+      if (v === "") return NaN;
+      const n = parseInt(v, 10);
+      return Number.isFinite(n) ? n : NaN;
     }
-    qtyEl.addEventListener('input', updatePrice);
-    updatePrice();
 
-    // ======= Bygg WhatsApp-meddelande =======
-    function buildMessage() {
-      const qty = Math.max(1, parseInt(qtyEl.value || "1", 10));
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    // Uppdatera prisrad + knappläge
+    function refreshUI(){
+      const q = parseQty();
+      if (!Number.isFinite(q) || q < 1){
+        priceEl.textContent = "Summa: –";
+        waBtn.disabled = true;
+      } else {
+        priceEl.textContent = `Summa: ${q * PRICE_EUR} €`;
+        waBtn.disabled = false;
+      }
+    }
+
+    // Tillåt tomt fält när man skriver; klampa först när man lämnar fältet
+    qtyEl.addEventListener('input', refreshUI);
+    qtyEl.addEventListener('blur', () => {
+      let q = parseQty();
+      if (!Number.isFinite(q) || q < 1) q = 1;
+      q = clamp(q, 1, 99);
+      qtyEl.value = q;
+      refreshUI();
+    });
+
+    // + / – knappar
+    minusEl.addEventListener('click', () => {
+      let q = parseQty();
+      if (!Number.isFinite(q)) q = 1;
+      q = clamp(q - 1, 1, 99);
+      qtyEl.value = q;
+      qtyEl.dispatchEvent(new Event('input'));
+    });
+    plusEl.addEventListener('click', () => {
+      let q = parseQty();
+      if (!Number.isFinite(q)) q = 1;
+      q = clamp(q + 1, 1, 99);
+      qtyEl.value = q;
+      qtyEl.dispatchEvent(new Event('input'));
+    });
+
+    // Startläge
+    refreshUI();
+
+    // Bygg WhatsApp-meddelande
+    function buildMessage(q){
       const color = colorEl.value.trim();
       const buyer = nameEl.value.trim();
-      const note = noteEl.value.trim();
-      const total = qty * PRICE_EUR;
-
+      const note  = noteEl.value.trim();
       let lines = [];
       lines.push("Hej Lukas! 👋");
-      lines.push(`Jag vill beställa ${qty} st 3D-printade ljuslyktor.`);
+      lines.push(`Jag vill beställa ${q} st 3D-printade ljuslyktor.`);
       if (color) lines.push(`Färg: ${color}`);
       lines.push(`Pris: ${PRICE_EUR} € / st`);
-      lines.push(`Summa: ${total} €`);
+      lines.push(`Summa: ${q * PRICE_EUR} €`);
       if (buyer) lines.push(`Namn: ${buyer}`);
-      if (note) lines.push(`Meddelande: ${note}`);
+      if (note)  lines.push(`Meddelande: ${note}`);
       lines.push("");
       lines.push("Skickat via hemsidan ✅");
-
       return lines.join("\n");
     }
 
-    // ======= Öppna WhatsApp =======
+    // Öppna WhatsApp
     waBtn.addEventListener('click', () => {
-      const msg = encodeURIComponent(buildMessage());
-      if (!WHATSAPP_NUMBER || /[^\d]/.test(WHATSAPP_NUMBER)) {
+      const q = parseQty();
+      if (!Number.isFinite(q) || q < 1){ return; }
+      if (!WHATSAPP_NUMBER || /[^\d]/.test(WHATSAPP_NUMBER)){
         alert("Konfigurera ditt WhatsApp-nummer i koden (internationellt format utan + eller mellanslag).");
         return;
       }
+      const msg = encodeURIComponent(buildMessage(q));
       const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
       window.open(url, '_blank');
     });
