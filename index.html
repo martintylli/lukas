@@ -142,7 +142,7 @@
 
   <!-- Beställning -->
   <section class="card" style="max-width:640px">
-    <h2 style="text-align:center;margin-top:0">Beställ via WhatsApp</h2>
+    <h2 style="text-align:center;margin-top:0">Beställ med detta formulär</h2>
 
     <!-- Totalt antal (beräknas) -->
     <div class="row">
@@ -216,7 +216,7 @@ const GAS_SECRET   = "jakobstad";
 // Färger i listan
 const COLORS = [
   "Mörkgrön","Vit","Svart","Grå glitter","Lila glitter",
-  "Röd glitter","Grön glitter","Lysande grön"
+  "Röd glitter","Grön glitter","Självlysande grön"
 ];
 
 /* ======= Karusell ======= */
@@ -386,7 +386,7 @@ function logOrderToSheet(payload){
     setTimeout(()=> form.remove(), 1000); // städa bort
   }catch(_){ /* ignoreras */ }
 }
-</script>
+
 
 
 /* ======= Skicka & reset ======= */
@@ -423,5 +423,6 @@ renderColors(); updateTotals();
 </script>
 </body>
 </html>
+
 
 
