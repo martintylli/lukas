@@ -4,356 +4,360 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lukas Ljuslyktor</title>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <meta name="color-scheme" content="light dark" />
   <style>
     :root{
       --bg:linear-gradient(135deg,#f9fafb 0%,#eef2ff 40%,#fff7ed 100%);
       --ink:#111827; --muted:#6b7280;
       --card-bg:rgba(255,255,255,0.7); --card-brd:rgba(255,255,255,0.5);
-      --brand:#111827; --wa:#22c55e; --mail:#fbbf24;
+      --wa:#22c55e; --mail:#fbbf24;
       --pill-bg:#fff7e2; --pill-brd:#f1d07a;
-      --chip:#e5e7eb; --chip-ink:#111827; --chip-active:#111827; --chip-active-ink:#fff;
-      --shadow:0 10px 30px rgba(0,0,0,.10);
-      --radius:16px;
+      --shadow:0 10px 30px rgba(0,0,0,.10); --radius:16px;
     }
     @media (prefers-color-scheme: dark){
       :root{
         --bg:linear-gradient(135deg,#0b1220 0%,#0f172a 45%,#111827 100%);
         --ink:#e5e7eb; --muted:#9ca3af;
         --card-bg:rgba(17,24,39,0.55); --card-brd:rgba(255,255,255,0.06);
-        --brand:#e5e7eb; --pill-bg:#1f2937; --pill-brd:#374151;
-        --chip:#1f2937; --chip-ink:#e5e7eb; --chip-active:#22c55e; --chip-active-ink:#0b1220;
+        --pill-bg:#1f2937; --pill-brd:#374151;
         --shadow:0 10px 30px rgba(0,0,0,.35);
       }
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-      background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      background:var(--bg); color:var(--ink); line-height:1.55;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
-    header{
-      padding:32px 16px 24px; text-align:center;
-    }
-    h1{
-      margin:0 0 10px; font-size:clamp(28px,4.5vw,40px); font-weight:800; letter-spacing:.2px; color:var(--brand);
-    }
-    p.lead{
-      margin:0 auto; max-width:820px; font-size:clamp(16px,2.5vw,18px); color:var(--muted);
-    }
-    .wrap{max-width:980px; margin:0 auto; padding:8px 16px 40px}
+    header{text-align:center;padding:32px 16px 24px}
+    h1{margin:0 0 10px;font-size:clamp(28px,4.5vw,40px)}
+    p.lead{margin:0 auto;max-width:820px;color:var(--muted)}
+    .wrap{max-width:980px;margin:0 auto;padding:8px 16px 40px}
 
-    /* ===== Card (glassmorphism) ===== */
     .card{
-      backdrop-filter: blur(8px);
-      background: var(--card-bg);
-      border: 1px solid var(--card-brd);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      margin: 18px auto;
+      backdrop-filter:blur(8px); background:var(--card-bg);
+      border:1px solid var(--card-brd); border-radius:var(--radius);
+      box-shadow:var(--shadow); padding:20px; margin:18px auto;
     }
 
-    /* ===== Carousel ===== */
-    .carousel{
-      position:relative; width:100%; max-width:560px; margin:18px auto;
-      overflow:hidden; border-radius: var(--radius);
-      background: rgba(255,255,255,.35);
-    }
-    .carousel-track{ display:flex; transition: transform .4s ease; height:100% }
-    .carousel-slide{ flex:0 0 100%; height: 100%; display:flex; align-items:center; justify-content:center }
-    .carousel{ aspect-ratio: 3 / 4 } /* snygg, mobilvänlig */
-    .carousel-slide img{ width:100%; height:100%; object-fit:contain; display:block }
-    .carousel-button{
-      position:absolute; top:50%; transform:translateY(-50%);
-      width:44px; height:44px; border:none; border-radius:999px; cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(0,0,0,.45); color:#fff; backdrop-filter: blur(4px);
-      transition:transform .12s ease, background .2s ease
-    }
-    .carousel-button:hover{ transform:translateY(-50%) scale(1.05); background:rgba(0,0,0,.6) }
-    .carousel-button.prev{ left:10px } .carousel-button.next{ right:10px }
-    .dots{ display:flex; justify-content:center; gap:8px; margin-top:10px }
-    .dot{ width:8px; height:8px; border-radius:999px; background:#c7c7c7; opacity:.8; transition:all .2s }
-    .dot.active{ width:22px; background:#6b7280 }
+    /* Karusell */
+    .carousel{position:relative;width:100%;max-width:560px;margin:18px auto;overflow:hidden;
+      border-radius:var(--radius);background:rgba(255,255,255,.35);aspect-ratio:3/4}
+    .carousel-track{display:flex;transition:transform .4s ease;height:100%}
+    .carousel-slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center}
+    .carousel-slide img{width:100%;height:100%;object-fit:contain;display:block}
+    .carousel-button{position:absolute;top:50%;transform:translateY(-50%);
+      width:44px;height:44px;border:none;border-radius:999px;cursor:pointer;
+      background:rgba(0,0,0,.45);color:#fff}
+    .carousel-button.prev{left:10px}.carousel-button.next{right:10px}
+    .dots{display:flex;justify-content:center;gap:8px;margin-top:10px}
+    .dot{width:8px;height:8px;border-radius:999px;background:#c7c7c7}
+    .dot.active{width:22px;background:#6b7280}
 
-    /* ===== Order ===== */
-    .order{ max-width:620px }
-    .order h2{ margin:0 0 12px; text-align:center; font-size:22px }
-    .row{ display:flex; flex-direction:column; gap:8px; margin:12px 0 }
-    label{ font-weight:600; font-size:15px }
-    input[type="text"], input[type="number"], textarea{
-      width:100%; padding:12px 14px; border:1px solid rgba(0,0,0,.08);
-      border-radius:12px; background: rgba(255,255,255,.6); color:var(--ink); font-size:16px;
+    /* Order */
+    label{font-weight:700;font-size:15px}
+    input[type="text"],textarea{
+      width:100%;padding:12px 14px;border:1px solid rgba(0,0,0,.08);
+      border-radius:12px;background:rgba(255,255,255,.6);font-size:16px;
     }
-    textarea{ min-height:78px; resize:vertical }
-    .qty-control{ display:flex; align-items:center; gap:10px }
-    .qty-btn{
-      width:44px; height:44px; border-radius:12px; border:1px solid rgba(0,0,0,.06);
-      background:rgba(255,255,255,.75); cursor:pointer; font-size:22px; font-weight:700;
-      transition:transform .1s ease; box-shadow: var(--shadow)
-    }
-    .qty-btn:active{ transform:scale(.97) }
-    .qty-input{ max-width:140px; text-align:center }
+    textarea{min-height:78px;resize:vertical}
 
-    /* Chips */
-    .chips{ display:flex; flex-wrap:wrap; gap:8px }
-    .chip{
-      padding:8px 12px; border-radius:999px; font-weight:600; font-size:14px; cursor:pointer;
-      background:var(--chip); color:var(--chip-ink); border:1px solid rgba(0,0,0,.06);
-      transition:transform .1s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
-      user-select:none;
+    .color-list{display:flex;flex-direction:column;gap:10px}
+    .color-row{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      padding:10px;border:1px solid rgba(0,0,0,.06);border-radius:12px;background:rgba(255,255,255,.6)
     }
-    .chip:hover{ transform:translateY(-1px) }
-    .chip.active{ background:var(--chip-active); color:var(--chip-active-ink); box-shadow: var(--shadow); }
+    .mini-btn{width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.06);
+      background:#fff;cursor:pointer;font-size:18px;font-weight:800}
+    .mini-input{width:64px;text-align:center;padding:8px 10px;border:1px solid rgba(0,0,0,.1);
+      border-radius:10px;background:#fff;font-size:16px}
 
-    .price-line{
-      text-align:center; margin-top:8px; font-weight:800; letter-spacing:.3px;
-      background:var(--pill-bg); border:2px solid var(--pill-brd);
-      display:inline-block; padding:10px 18px; border-radius:999px;
-    }
+    .ship-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+    .ship-option{flex:1;padding:10px;border:2px solid #ddd;border-radius:12px;
+      text-align:center;cursor:pointer;background:#fff;font-weight:600}
+    .ship-option.active{border-color:#22c55e;background:#e6ffed}
 
-    /* Buttons */
-    .actions{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:14px }
-    .btn{
-      display:inline-flex; align-items:center; gap:10px; padding:12px 18px;
-      border-radius:999px; border:none; cursor:pointer; font-weight:800; letter-spacing:.3px;
-      transition:transform .12s ease, opacity .15s ease, box-shadow .15s ease;
-      box-shadow: var(--shadow);
-    }
-    .btn svg{ width:20px; height:20px }
-    .btn:hover{ transform:translateY(-1px) }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none }
-    .btn-wa{ background:var(--wa); color:#0b1220 }
-    .btn-mail{ background:var(--mail); color:#0b1220 }
+    .price-line{text-align:center;margin-top:8px;font-weight:800;
+      background:var(--pill-bg);border:2px solid var(--pill-brd);
+      display:inline-block;padding:10px 18px;border-radius:999px}
 
-    footer{ text-align:center; color:var(--muted); font-size:.95rem; padding:20px 0 40px }
+    .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;
+      border-radius:999px;border:none;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}
+    .btn-wa{background:var(--wa);color:#0b1220}.btn-mail{background:var(--mail);color:#0b1220}
 
-    /* Narrow tweaks */
-    @media (max-width:540px){
-      .order{ padding:16px }
-      .qty-input{ max-width:110px }
-    }
+    footer{text-align:center;color:var(--muted);padding:20px 0 40px}
   </style>
 </head>
 <body>
-  <header>
-    <h1>Lukas säljer ljuslyktor</h1>
-    <p class="lead">Vackra 3D-printade lyktor för LED-ljus – 5 € styck inklusive LED-ljus!</p>
-  </header>
+<header>
+  <h1>Lukas säljer ljuslyktor</h1>
+  <p class="lead">Vackra 3D-printade lyktor för LED-ljus – endast 5 € styck inklusive LED-ljus!</p>
+</header>
 
-  <div class="wrap">
+<div class="wrap">
 
-    <!-- ===== Bildkarusell ===== -->
-    <section class="card" style="max-width:680px; margin-top:6px">
-      <div class="carousel" aria-label="Bilder på ljuslyktor">
-        <button class="carousel-button prev" aria-label="Föregående bild">❮</button>
-        <div class="carousel-track" id="carousel-track">
-          <div class="carousel-slide"><img loading="lazy" src="Ljuslykta5.jpg" alt="3D-printad ljuslykta 1"></div>
-          <div class="carousel-slide"><img loading="lazy" src="Ljuslykta2.jpg" alt="3D-printad ljuslykta 2"></div>
-          <div class="carousel-slide"><img loading="lazy" src="Ljuslykta3.jpg" alt="3D-printad ljuslykta 3"></div>
-          <div class="carousel-slide"><img loading="lazy" src="Ljuslykta4.jpg" alt="3D-printad ljuslykta 4"></div>
-          <div class="carousel-slide"><img loading="lazy" src="Ljuslykta1.jpg" alt="3D-printad ljuslykta 5"></div>
-        </div>
-        <button class="carousel-button next" aria-label="Nästa bild">❯</button>
+  <!-- Karusell -->
+  <section class="card" style="max-width:680px;">
+    <div class="carousel" aria-label="Bilder på ljuslyktor">
+      <button class="carousel-button prev" aria-label="Föregående bild">❮</button>
+      <div class="carousel-track" id="carousel-track">
+        <div class="carousel-slide"><img src="Ljuslykta1.jpg" alt="3D-printad ljuslykta 1"></div>
+        <div class="carousel-slide"><img src="Ljuslykta2.jpg" alt="3D-printad ljuslykta 2"></div>
+        <div class="carousel-slide"><img src="Ljuslykta3.jpg" alt="3D-printad ljuslykta 3"></div>
+        <div class="carousel-slide"><img src="Ljuslykta4.jpg" alt="3D-printad ljuslykta 4"></div>
+        <div class="carousel-slide"><img src="Ljuslykta5.jpg" alt="3D-printad ljuslykta 5"></div>
       </div>
-      <div class="dots" id="dots"></div>
-    </section>
+      <button class="carousel-button next" aria-label="Nästa bild">❯</button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </section>
 
-    <!-- ===== Beställningskort ===== -->
-    <section class="card order">
-      <h2>Beställ via WhatsApp</h2>
+  <!-- Beställning -->
+  <section class="card" style="max-width:640px">
+    <h2 style="text-align:center;margin-top:0">Beställ via WhatsApp</h2>
 
-      <div class="row">
-        <label for="qty">Antal lyktor</label>
-        <div class="qty-control">
-          <button class="qty-btn" id="minus" aria-label="Minska antal">−</button>
-          <input id="qty" class="qty-input" type="number" min="1" max="99" inputmode="numeric" placeholder="Ange antal" />
-          <button class="qty-btn" id="plus" aria-label="Öka antal">+</button>
-        </div>
+    <!-- Totalt antal (beräknas) -->
+    <div class="row">
+      <label>Totalt antal</label>
+      <div id="totalQty">0 st</div>
+    </div>
+
+    <!-- Färger & antal -->
+    <div class="row">
+      <label>Färg & antal</label>
+      <div id="colorList" class="color-list"></div>
+    </div>
+
+    <!-- Frakt -->
+    <div class="row">
+      <label>Leverans eller hämtning</label>
+      <div class="ship-row">
+        <div class="ship-option active" data-type="pickup" data-price="0">Hämtning (0 €)</div>
+        <div class="ship-option" data-type="delivery" data-price="10">Leverans (10 €)</div>
       </div>
+    </div>
 
-      <div class="row">
-        <label>Färg</label>
-        <div class="chips" id="chips">
-          <div class="chip active" data-value="Mörkgrön">Mörkgrön</div>
-          <div class="chip" data-value="Vit">Vit</div>
-          <div class="chip" data-value="Svart">Svart</div>
-          <div class="chip" data-value="Grå glitter">Grå glitter</div>
-          <div class="chip" data-value="Lila glitter">Lila glitter</div>
-          <div class="chip" data-value="Röd glitter">Röd glitter</div>
-          <div class="chip" data-value="Grön glitter">Grön glitter</div>
-          <div class="chip" data-value="Självlysande grön">Självlysande grön</div>        </div>
-      </div>
+    <!-- Kundinfo -->
+    <div class="row">
+      <label for="name">Ditt namn</label>
+      <input id="name" type="text" placeholder="För- och efternamn (frivilligt)" />
+    </div>
+    <div class="row">
+      <label for="note">Meddelande</label>
+      <textarea id="note" placeholder="Önskemål eller avhämtningstid – frivilligt"></textarea>
+    </div>
 
-      <div class="row">
-        <label for="name">Ditt namn</label>
-        <input id="name" type="text" placeholder="För- och efternamn" />
-      </div>
+    <!-- Summa -->
+    <div style="text-align:center">
+      <span class="price-line" id="priceTag">Summa: –</span>
+    </div>
 
-      <div class="row">
-        <label for="note">Meddelande</label>
-        <textarea id="note" placeholder="Önskemål"></textarea>
-      </div>
+    <!-- Knappar -->
+    <div class="actions">
+      <button id="waBtn" class="btn btn-wa" disabled>WhatsApp</button>
+      <button id="mailBtn" class="btn btn-mail" disabled>E-post</button>
+    </div>
 
-      <div style="text-align:center">
-        <span class="price-line" id="priceTag">Summa: –</span>
-      </div>
+    <p style="text-align:center;color:var(--muted)">
+      När du trycker på en knapp öppnas din app med ett färdigt meddelande – du behöver bara skicka.<br>
+      <strong>Leverans eller avhämtning kommer vi överens om i WhatsApp.</strong>
+    </p>
+  </section>
 
-      <div class="actions">
-        <button id="waBtn" class="btn btn-wa" disabled>
-          <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M19.1 17.6c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1s-1.2-.5-2.3-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2.1-.4 0-.5 0-.2-.7-1.6-1-2.1-.3-.5-.5-.4-.7-.4h-.6c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.3s1 2.7 1.1 2.9c.2.3 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4 0 0-.1 0-.3-.2z"/><path fill="currentColor" d="M27.6 4.4C24.9 1.7 21.3.2 17.4.2 8.9.2 2 7.1 2 15.6c0 2.7.7 5.2 2 7.4L2 31.8l8.9-2.3c2.1 1.2 4.5 1.9 6.9 1.9 8.5 0 15.4-6.9 15.4-15.4 0-3.9-1.5-7.5-4.2-10.2zM17.8 28c-2.2 0-4.3-.6-6.1-1.7l-.4-.2-5.3 1.4 1.4-5.2-.2-.4C6 20 5.4 18 5.4 15.7 5.4 8.8 10.9 3.2 17.8 3.2c3.2 0 6.2 1.2 8.4 3.5 2.2 2.2 3.5 5.2 3.5 8.4 0 6.9-5.6 12.9-11.9 12.9z"/></svg>
-          WhatsApp
-        </button>
-        <button id="mailBtn" class="btn btn-mail" disabled>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z"/></svg>
-          E-post
-        </button>
-      </div>
+  <section class="card" style="max-width:720px; text-align:center">
+    <h2 style="margin:0 0 8px">Om Lukas</h2>
+    <p style="margin:0; color:var(--muted)">
+      Jag 3D-printar varje ljuslykta i hållbart PLA-material här i Finland.
+      De passar perfekt för LED-ljus och ger ett varmt, mysigt sken – en fin present för bara 5 € styck!
+    </p>
+  </section>
+</div>
 
-      <p style="text-align:center; color:var(--muted); margin-top:10px">
-        När du trycker på en knapp öppnas din app med ett färdigt meddelande – du behöver bara skicka.<br>
-        <strong>Leverans eller avhämtning kommer vi överens senare.</strong>
-      </p>
-    </section>
+<footer>© 2025 Lukas · 3D-printade ljuslyktor</footer>
 
-    <section class="card" style="max-width:720px; text-align:center">
-      <h2 style="margin:0 0 8px">Om Lukas</h2>
-      <p style="margin:0; color:var(--muted)">
-        Jag 3D-printar varje ljuslykta i hållbart PLA-material här i Finland.
-        De passar perfekt för LED-ljus och ger ett varmt, mysigt sken – en fin present för bara 5 € styck!
-      </p>
-    </section>
-  </div>
+<script>
+/* ======= KONFIG ======= */
+const PRICE = 5;                                   // pris per lykta
+const WA_NUMBER = "358505298881";    // ex: 358401234567 (endast siffror)
+const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";         // din e-post
 
-  <footer>© 2025 Lukas · 3D-printade ljuslyktor för LED-ljus</footer>
+// Google Apps Script endpoint + hemlighet
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxctpip9KZmM2XtoysLBQwdEQRw-4EnhCnlV8HJJ29rib-QqQJxpSdziMDLxiA1Jrbq/exec"; // slutar på /exec
+const GAS_SECRET   = "jakobstad";              // samma som i GAS
 
-  <script>
-    /* ========== Karusell ========== */
-    const track = document.getElementById("carousel-track");
-    const dotsBox = document.getElementById("dots");
-    const slides = track.querySelectorAll(".carousel-slide");
-    let idx = 0;
+// Färger i listan
+const COLORS = [
+  "Mörkgrön","Vit","Svart","Grå glitter","Lila glitter",
+  "Röd glitter","Grön glitter","Självlysande grön"
+];
 
-    slides.forEach((_, i) => {
-      const d = document.createElement("div");
-      d.className = "dot" + (i===0 ? " active" : "");
-      d.addEventListener("click", () => show(i));
-      dotsBox.appendChild(d);
+/* ======= Karusell ======= */
+const track = document.getElementById("carousel-track");
+const dotsBox = document.getElementById("dots");
+const slides = track.querySelectorAll(".carousel-slide");
+let idx = 0;
+slides.forEach((_, i) => {
+  const d = document.createElement("div");
+  d.className = "dot" + (i===0 ? " active" : "");
+  d.addEventListener("click", () => show(i));
+  dotsBox.appendChild(d);
+});
+const dots = dotsBox.querySelectorAll(".dot");
+function show(i){
+  idx = (i + slides.length) % slides.length;
+  track.style.transform = `translateX(-${idx*100}%)`;
+  dots.forEach((e,j)=>e.classList.toggle("active", j===idx));
+}
+document.querySelector(".next").onclick = () => show(idx+1);
+document.querySelector(".prev").onclick = () => show(idx-1);
+let startX=0;
+track.addEventListener("touchstart", e=>startX=e.touches[0].clientX, {passive:true});
+track.addEventListener("touchend", e=>{
+  const diff = e.changedTouches[0].clientX - startX;
+  if (Math.abs(diff) > 50) show(idx - Math.sign(diff));
+}, {passive:true});
+
+/* ======= Order-state ======= */
+const state = Object.fromEntries(COLORS.map(c => [c, 0]));
+let shipping = { type: "pickup", price: 0 };
+
+const colorList = document.getElementById("colorList");
+const totalQtyEl = document.getElementById("totalQty");
+const nameI = document.getElementById("name");
+const note = document.getElementById("note");
+const priceEl = document.getElementById("priceTag");
+const waBtn = document.getElementById("waBtn");
+const mailBtn = document.getElementById("mailBtn");
+
+function renderColors(){
+  colorList.innerHTML = "";
+  COLORS.forEach(color => {
+    const row = document.createElement("div");
+    row.className = "color-row";
+    row.innerHTML = `
+      <span class="color-name">${color}</span>
+      <div class="qty-mini">
+        <button class="mini-btn" data-act="minus" aria-label="Minska ${color}">−</button>
+        <input class="mini-input" type="number" min="0" max="99" inputmode="numeric" value="${state[color]}">
+        <button class="mini-btn" data-act="plus" aria-label="Öka ${color}">+</button>
+      </div>`;
+    const input = row.querySelector(".mini-input");
+    const minus = row.querySelector('[data-act="minus"]');
+    const plus  = row.querySelector('[data-act="plus"]');
+
+    function clamp(v){ v = Number.isFinite(v) ? v : 0; return Math.max(0, Math.min(99, v)); }
+    function set(v){ state[color] = clamp(v); input.value = state[color]; updateTotals(); }
+
+    minus.addEventListener("click", () => set(state[color]-1));
+    plus .addEventListener("click", () => set(state[color]+1));
+    input.addEventListener("input", () => { const n = parseInt(input.value,10); set(n); });
+
+    colorList.appendChild(row);
+  });
+}
+function totalQty(){ return Object.values(state).reduce((a,b)=>a+b,0); }
+function updateTotals(){
+  const q = totalQty();
+  totalQtyEl.textContent = `${q} st`;
+  priceEl.textContent = q ? `Summa: ${q*PRICE + shipping.price} €` : "Summa: –";
+  waBtn.disabled = mailBtn.disabled = q < 1;
+}
+document.querySelectorAll(".ship-option").forEach(el=>{
+  el.addEventListener("click", ()=>{
+    document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));
+    el.classList.add("active");
+    shipping = { type: el.dataset.type, price: +el.dataset.price };
+    updateTotals();
+  });
+});
+
+function orderId(){
+  const d = new Date(), pad = n => String(n).padStart(2,"0");
+  const rnd = Math.floor(1000 + Math.random()*9000);
+  return `LG-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}-${rnd}`;
+}
+function buildMessage(oid){
+  const q = totalQty(), lines = [
+    "Hej Lukas! 👋",
+    `Order-ID: ${oid}`,
+    `Totalt antal: ${q} st`,
+    "", "Önskade färger:"
+  ];
+  for (const [c, n] of Object.entries(state)) if (n > 0) lines.push(`• ${c}: ${n} st`);
+  lines.push(
+    "",
+    `Pris: ${PRICE} € / st`,
+    `Frakt: ${shipping.price} € (${shipping.type==="pickup"?"Hämtning":"Leverans"})`,
+    `Summa: ${q*PRICE + shipping.price} €`,
+    nameI.value ? `Namn: ${nameI.value}` : "",
+    note.value ? `Meddelande: ${note.value}` : "",
+    "",
+    "Leverans eller avhämtning bestäms i chatten. 🕯️",
+    "Skickat via hemsidan ✅"
+  );
+  return lines.filter(Boolean).join("\n");
+}
+
+/* ======= Google Sheets-logg ======= */
+async function logOrderToSheet(payload){
+  try{
+    await fetch(GAS_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payload, secret: GAS_SECRET })
     });
-    const dots = dotsBox.querySelectorAll(".dot");
+  }catch(_){ /* ignoreras */ }
+}
+function buildPayload(oid){
+  const q = totalQty();
+  return {
+    orderId: oid,
+    totalQty: q,
+    subtotal: q * PRICE,
+    shipping: { type: shipping.type, price: shipping.price },
+    total: q * PRICE + shipping.price,
+    name: nameI.value || "",
+    note: note.value || "",
+    colors: state,
+    userAgent: navigator.userAgent,
+    referrer: document.referrer
+  };
+}
 
-    function show(i){
-      idx = (i + slides.length) % slides.length;
-      track.style.transform = `translateX(-${idx*100}%)`;
-      dots.forEach((e,j)=>e.classList.toggle("active", j===idx));
-    }
-    document.querySelector(".carousel-button.next").onclick = () => show(idx+1);
-    document.querySelector(".carousel-button.prev").onclick = () => show(idx-1);
+/* ======= Skicka & reset ======= */
+function resetForm(){
+  Object.keys(state).forEach(k => state[k] = 0);
+  document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));
+  document.querySelector('.ship-option[data-type="pickup"]').classList.add("active");
+  shipping = { type: "pickup", price: 0 };
+  nameI.value = ""; note.value = "";
+  renderColors(); updateTotals();
+}
+document.getElementById("waBtn").addEventListener("click", async ()=>{
+  if (totalQty() < 1) return;
+  if (!WA_NUMBER || /[^\d]/.test(WA_NUMBER)) { alert("Ställ in WA_NUMBER (endast siffror)."); return; }
+  const oid = orderId();
+  logOrderToSheet(buildPayload(oid));
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildMessage(oid))}`;
+  window.open(url, "_blank");
+  resetForm();
+});
+document.getElementById("mailBtn").addEventListener("click", async ()=>{
+  if (totalQty() < 1) return;
+  if (!EMAIL_ADDRESS) { alert("Ställ in EMAIL_ADDRESS."); return; }
+  const oid = orderId();
+  logOrderToSheet(buildPayload(oid));
+  const subject = encodeURIComponent("Beställning av ljuslyktor");
+  const body = encodeURIComponent(buildMessage(oid));
+  window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
+  resetForm();
+});
 
-    let startX=0;
-    track.addEventListener("touchstart", e => startX = e.touches[0].clientX, {passive:true});
-    track.addEventListener("touchend", e => {
-      const diff = e.changedTouches[0].clientX - startX;
-      if (Math.abs(diff) > 50) show(idx - Math.sign(diff));
-    }, {passive:true});
-
-    /* ========== Order UI ========== */
-    const PRICE = 5;
-    const WA_NUMBER = "358505298881";  // ex: 358401234567
-    const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";       // byt till din adress
-
-    const qty = document.getElementById("qty");
-    const minus = document.getElementById("minus");
-    const plus = document.getElementById("plus");
-    const nameI = document.getElementById("name");
-    const note = document.getElementById("note");
-    const price = document.getElementById("priceTag");
-    const waBtn = document.getElementById("waBtn");
-    const mailBtn = document.getElementById("mailBtn");
-    const chips = document.getElementById("chips");
-
-    function parseQty(){ const v = qty.value.trim(); return v==="" ? NaN : parseInt(v,10); }
-    function updateUI(){
-      const q = parseQty(); const ok = Number.isFinite(q)&&q>=1;
-      price.textContent = ok ? `Summa: ${q*PRICE} €` : "Summa: –";
-      waBtn.disabled = !ok; mailBtn.disabled = !ok;
-    }
-    qty.addEventListener("input", updateUI);
-    qty.addEventListener("blur", () => {
-      let q = parseQty(); if(!Number.isFinite(q)||q<1) q=1; if(q>99) q=99; qty.value=q; updateUI();
-    });
-    minus.addEventListener("click", () => {
-      let q = parseQty(); if(!Number.isFinite(q)) q=1; else q=Math.max(1,q-1);
-      qty.value=q; updateUI();
-    });
-    plus.addEventListener("click", () => {
-      let q = parseQty(); if(!Number.isFinite(q)) q=0; q=Math.min(99,q+1);
-      qty.value=q; updateUI();
-    });
-
-    // Färgchips
-    let colorValue = "";
-    chips.addEventListener("click", (e)=>{
-      const el = e.target.closest(".chip"); if(!el) return;
-      chips.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
-      el.classList.add("active");
-      colorValue = el.dataset.value || "";
-    });
-
-    function orderId(){
-      // LG-ÅÅÅÅMMDD-HHMM-XXXX (slump)
-      const d = new Date();
-      const pad = n => String(n).padStart(2,"0");
-      const rand = Math.floor(1000 + Math.random()*9000);
-      return `LG-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}-${rand}`;
-    }
-
-    function message(q){
-      const lines = [
-        "Hej Lukas! 👋",
-        `Order-ID: ${orderId()}`,
-        `Jag vill beställa ${q} st 3D-printade ljuslyktor.`,
-        colorValue ? `Färg: ${colorValue}` : null,
-        `Pris: ${PRICE} € / st`,
-        `Summa: ${q*PRICE} €`,
-        nameI.value ? `Namn: ${nameI.value}` : null,
-        note.value ? `Meddelande: ${note.value}` : null,
-        "",
-        "Leverans eller avhämtning kommer vi överens om här i chatten. 🕯️",
-        "Skickat via hemsidan ✅"
-      ].filter(Boolean);
-      return lines.join("\n");
-    }
-
-    function resetForm(){
-      qty.value=""; nameI.value=""; note.value="";
-      colorValue=""; chips.querySelectorAll(".chip").forEach((c,i)=>c.classList.toggle("active", i===0));
-      updateUI();
-    }
-
-    waBtn.addEventListener("click", ()=>{
-      const q = parseQty(); if(!Number.isFinite(q)||q<1) return;
-      if(!WA_NUMBER || /[^\d]/.test(WA_NUMBER)){ alert("Ställ in WA_NUMBER i koden (endast siffror)."); return; }
-      window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message(q))}`, "_blank");
-      resetForm();
-    });
-
-    mailBtn.addEventListener("click", ()=>{
-      const q = parseQty(); if(!Number.isFinite(q)||q<1) return;
-      if(!EMAIL_ADDRESS){ alert("Ställ in EMAIL_ADDRESS i koden."); return; }
-      const subject = encodeURIComponent("Beställning av ljuslyktor");
-      const body = encodeURIComponent(message(q));
-      window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-      resetForm();
-    });
-
-    // init
-    updateUI();
-  </script>
+/* init */
+renderColors(); updateTotals();
+</script>
 </body>
 </html>
-
-
