@@ -14,6 +14,8 @@
       --wa:#22c55e; --mail:#fbbf24;
       --pill-bg:#fff7e2; --pill-brd:#f1d07a;
       --shadow:0 10px 30px rgba(0,0,0,.10); --radius:16px;
+      /* NYTT: alltid svarta siffror */
+      --num:#000;
     }
     @media (prefers-color-scheme: dark){
       :root{
@@ -22,6 +24,8 @@
         --card-bg:rgba(17,24,39,0.55); --card-brd:rgba(255,255,255,0.06);
         --pill-bg:#1f2937; --pill-brd:#374151;
         --shadow:0 10px 30px rgba(0,0,0,.35);
+        /* behåll --num svart i mörkt läge också */
+        --num:#000;
       }
     }
     *{box-sizing:border-box}
@@ -60,6 +64,7 @@
     input[type="text"],textarea{
       width:100%;padding:12px 14px;border:1px solid rgba(0,0,0,.08);
       border-radius:12px;background:rgba(255,255,255,.6);font-size:16px;
+      color:var(--ink);
     }
     textarea{min-height:78px;resize:vertical}
 
@@ -68,24 +73,45 @@
       display:flex;justify-content:space-between;align-items:center;gap:10px;
       padding:10px;border:1px solid rgba(0,0,0,.06);border-radius:12px;background:rgba(255,255,255,.6)
     }
-    .mini-btn{width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.06);
-      background:#fff;cursor:pointer;font-size:18px;font-weight:800}
-    .mini-input{width:64px;text-align:center;padding:8px 10px;border:1px solid rgba(0,0,0,.1);
-      border-radius:10px;background:#fff;font-size:16px}
+    .mini-btn{
+      width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.06);
+      background:#fff;cursor:pointer;font-size:18px;font-weight:800;
+      /* NYTT: plus/minus alltid svarta */
+      color:var(--num);
+    }
+    .mini-input{
+      width:64px;text-align:center;padding:8px 10px;border:1px solid rgba(0,0,0,.1);
+      border-radius:10px;background:#fff;font-size:16px;
+      /* NYTT: sifferfält alltid svart */
+      color:var(--num);
+    }
 
     .ship-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
     .ship-option{flex:1;padding:10px;border:2px solid #ddd;border-radius:12px;
-      text-align:center;cursor:pointer;background:#fff;font-weight:600}
+      text-align:center;cursor:pointer;background:#fff;font-weight:600;
+      /* NYTT: priser i alternativen alltid svarta */
+      color:var(--num);
+    }
     .ship-option.active{border-color:#22c55e;background:#e6ffed}
 
-    .price-line{text-align:center;margin-top:8px;font-weight:800;
+    .price-line{
+      text-align:center;margin-top:8px;font-weight:800;
       background:var(--pill-bg);border:2px solid var(--pill-brd);
-      display:inline-block;padding:10px 18px;border-radius:999px}
+      display:inline-block;padding:10px 18px;border-radius:999px;
+      /* NYTT: Summa: XX € alltid svart */
+      color:var(--num);
+    }
 
     .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;
       border-radius:999px;border:none;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}
     .btn-wa{background:var(--wa);color:#0b1220}.btn-mail{background:var(--mail);color:#0b1220}
+
+    #totalQty{
+      /* NYTT: totalsiffran alltid svart */
+      color:var(--num);
+      font-weight:700;
+    }
 
     footer{text-align:center;color:var(--muted);padding:20px 0 40px}
   </style>
@@ -180,12 +206,12 @@
 <script>
 /* ======= KONFIG ======= */
 const PRICE = 5;                                   // pris per lykta
-const WA_NUMBER = "358505298881";    // ex: 358401234567 (endast siffror)
-const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";         // din e-post
+const WA_NUMBER = "358505298881";                  // endast siffror
+const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";
 
 // Google Apps Script endpoint + hemlighet
-const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxctpip9KZmM2XtoysLBQwdEQRw-4EnhCnlV8HJJ29rib-QqQJxpSdziMDLxiA1Jrbq/exec"; // slutar på /exec
-const GAS_SECRET   = "jakobstad";              // samma som i GAS
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxctpip9KZmM2XtoysLBQwdEQRw-4EnhCnlV8HJJ29rib-QqQJxpSdziMDLxiA1Jrbq/exec";
+const GAS_SECRET   = "jakobstad";
 
 // Färger i listan
 const COLORS = [
