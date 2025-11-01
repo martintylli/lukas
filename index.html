@@ -183,10 +183,10 @@
 <script>
 /* ======= KONFIG ======= */
 const PRICE = 5;
-const WA_NUMBER = "358505298881";
+const WA_NUMBER = "358505298881";                 // endast siffror
 const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";
 
-// NY bundna WebApp-URL:en (den som ger "pong-bound-v2")
+// Bundna WebApp-URL:en (den som visar "pong-bound-v2" i GET)
 const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbyfWvI5voKxx9QsGEhCNPsdRi80t1JaFFPFN9fq62UZ-fKNSBdonTlBakDnRdpNYIpO/exec";
 const GAS_SECRET   = "jakobstad";
 
@@ -223,13 +223,13 @@ track.addEventListener("touchend", e=>{
 const state = Object.fromEntries(COLORS.map(c => [c, 0]));
 let shipping = { type: "pickup", price: 0 };
 
-const colorList = document.getElementById("colorList");
-const totalQtyEl = document.getElementById("totalQty");
-const nameI = document.getElementById("name");
-const note = document.getElementById("note");
-const priceEl = document.getElementById("priceTag");
-const waBtn = document.getElementById("waBtn");
-const mailBtn = document.getElementById("mailBtn");
+const colorList   = document.getElementById("colorList");
+const totalQtyEl  = document.getElementById("totalQty");
+const nameI       = document.getElementById("name");
+const note        = document.getElementById("note");
+const priceEl     = document.getElementById("priceTag");
+const waBtn       = document.getElementById("waBtn");
+const mailBtn     = document.getElementById("mailBtn");
 
 function renderColors(){
   colorList.innerHTML = "";
@@ -299,10 +299,12 @@ function buildMessage(oid){
   );
   return lines.filter(Boolean).join("\n");
 }
-function buildPayload(oid){
+function buildPayload(oid, channel, waText){
   const q = totalQty();
   return {
     orderId: oid,
+    channel,          // 'whatsapp' eller 'email'
+    waText,           // meddelandet som skickas
     totalQty: q,
     subtotal: q * PRICE,
     shipping: { type: shipping.type, price: shipping.price },
@@ -380,24 +382,40 @@ function resetForm(){
   nameI.value = ""; note.value = "";
   renderColors(); updateTotals();
 }
+
 document.getElementById("waBtn").addEventListener("click", ()=>{
   if (totalQty() < 1) return;
   if (!WA_NUMBER || /[^\d]/.test(WA_NUMBER)) { alert("Ställ in WA_NUMBER (endast siffror)."); return; }
   const oid = orderId();
-  logOrderToSheet(buildPayload(oid));
-  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(buildMessage(oid))}`;
-  window.open(url, "_blank");
-  resetForm();
+  const msg = buildMessage(oid);
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+  // 1) Navigera först (minimerar popup-blockering)
+  window.location.href = url;
+
+  // 2) Logga strax efter
+  setTimeout(()=> {
+    logOrderToSheet(buildPayload(oid, 'whatsapp', msg));
+    resetForm();
+  }, 300);
 });
+
 document.getElementById("mailBtn").addEventListener("click", ()=>{
   if (totalQty() < 1) return;
   if (!EMAIL_ADDRESS) { alert("Ställ in EMAIL_ADDRESS."); return; }
   const oid = orderId();
-  logOrderToSheet(buildPayload(oid));
+  const msg = buildMessage(oid);
   const subject = encodeURIComponent("Beställning av ljuslyktor");
-  const body = encodeURIComponent(buildMessage(oid));
+  const body    = encodeURIComponent(msg);
+
+  // 1) Öppna e-postklient
   window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-  resetForm();
+
+  // 2) Logga strax efter
+  setTimeout(()=> {
+    logOrderToSheet(buildPayload(oid, 'email', msg));
+    resetForm();
+  }, 300);
 });
 
 /* init */
