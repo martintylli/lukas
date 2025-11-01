@@ -24,17 +24,64 @@
     p.lead{max-width:720px; margin:8px auto 0; font-size:1rem}
     .wrap{max-width:960px; margin:0 auto; padding:16px}
 
-    .gallery{
-      display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin:20px auto;
+    /* ===== Bildkarusell ===== */
+    .carousel {
+      position: relative;
+      width: 90%;
+      max-width: 500px;
+      margin: 20px auto;
+      overflow: hidden;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      background: #fff;
     }
-    .gallery img{
-      width:260px; height:260px; object-fit:cover;
-      border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,.12);
-      transition:transform .2s ease;
+    .carousel-track {
+      display: flex;
+      transition: transform 0.4s ease;
     }
-    .gallery img:hover{ transform:scale(1.03) }
+    .carousel img {
+      width: 100%;
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+    }
+    .carousel-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.4);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .carousel-button:hover { background: rgba(0,0,0,0.6); }
+    .carousel-button.prev { left: 10px; }
+    .carousel-button.next { right: 10px; }
 
-    /* Kort */
+    .dots {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+      gap: 8px;
+    }
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .dot.active { background: #666; }
+
+    /* ===== Kort och knappar ===== */
     .card{
       background:var(--card); border-radius:12px; margin:18px auto;
       box-shadow:0 2px 10px rgba(0,0,0,.06);
@@ -49,7 +96,6 @@
     }
     textarea{ min-height:70px; resize:vertical }
 
-    /* Antal med +/− */
     .qty-control{ display:flex; align-items:center; gap:8px }
     .qty-control input{
       text-align:center; max-width:120px; flex:0 0 120px; padding:10px 8px;
@@ -85,7 +131,6 @@
     footer{ margin:30px 0 18px; color:var(--muted); font-size:.9rem }
 
     @media (max-width:640px){
-      .gallery img{ width:220px; height:220px }
       .card{ padding:16px; border-radius:12px }
     }
   </style>
@@ -97,21 +142,31 @@
   </header>
 
   <div class="wrap">
-    <section class="gallery" aria-label="Produktbilder">
-      <img src="Ljuslykta1.jpg" alt="3D-printad ljuslykta – modell 1">
-      <img src="Ljuslykta2.jpg" alt="3D-printad ljuslykta – modell 2">
-      <img src="Ljuslykta3.jpg" alt="3D-printad ljuslykta – modell 3">
-    </section>
 
-    <section class="card" aria-labelledby="order-title">
-      <h2 id="order-title">Beställ via WhatsApp elle E-Post</h2>
+    <!-- ===== Bildkarusell ===== -->
+    <section class="carousel" aria-label="Bilder på ljuslyktor">
+      <button class="carousel-button prev" aria-label="Föregående bild">❮</button>
+      <div class="carousel-track" id="carousel-track">
+        <img src="Ljuslykta1.jpg" alt="3D-printad ljuslykta 1">
+        <img src="Ljuslykta2.jpg" alt="3D-printad ljuslykta 2">
+        <img src="Ljuslykta3.jpg" alt="3D-printad ljuslykta 3">
+        <img src="Ljuslykta4.jpg" alt="3D-printad ljuslykta 4">
+        <img src="Ljuslykta5.jpg" alt="3D-printad ljuslykta 5">
+      </div>
+      <button class="carousel-button next" aria-label="Nästa bild">❯</button>
+    </section>
+    <div class="dots" id="dots"></div>
+
+    <!-- ===== Beställningskort ===== -->
+    <section class="card">
+      <h2>Beställ via WhatsApp</h2>
 
       <div class="row">
         <label for="qty">Antal lyktor</label>
         <div class="qty-control">
-          <button class="qty-btn" id="minus" aria-label="Minska antal">−</button>
+          <button class="qty-btn" id="minus">−</button>
           <input id="qty" type="number" min="1" max="99" inputmode="numeric" placeholder="Ange antal" />
-          <button class="qty-btn" id="plus" aria-label="Öka antal">+</button>
+          <button class="qty-btn" id="plus">+</button>
         </div>
       </div>
 
@@ -119,10 +174,11 @@
         <label for="color">Färg</label>
         <select id="color">
           <option value="">Valfri / mix</option>
-          <option>Grön glitter</option>
-          <option>Silver glitter</option>
-          <option>Röd glitter</option>
-          <option>Självlysande</option>
+          <option>Vit</option>
+          <option>Svart</option>
+          <option>Beige</option>
+          <option>Koppar</option>
+          <option>Guld</option>
         </select>
       </div>
 
@@ -142,20 +198,13 @@
 
       <div class="actions">
         <button id="waBtn" class="btn btn-wa" disabled>
-          <!-- WhatsApp ikon -->
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path fill="currentColor" d="M19.1 17.6c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1s-1.2-.5-2.3-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2.1-.4 0-.5 0-.2-.7-1.6-1-2.1-.3-.5-.5-.4-.7-.4h-.6c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.3s1 2.7 1.1 2.9c.2.3 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4 0 0-.1 0-.3-.2z"/>
-            <path fill="currentColor" d="M27.6 4.4C24.9 1.7 21.3.2 17.4.2 8.9.2 2 7.1 2 15.6c0 2.7.7 5.2 2 7.4L2 31.8l8.9-2.3c2.1 1.2 4.5 1.9 6.9 1.9 8.5 0 15.4-6.9 15.4-15.4 0-3.9-1.5-7.5-4.2-10.2zM17.8 28c-2.2 0-4.3-.6-6.1-1.7l-.4-.2-5.3 1.4 1.4-5.2-.2-.4C6 20 5.4 18 5.4 15.7 5.4 8.8 10.9 3.2 17.8 3.2c3.2 0 6.2 1.2 8.4 3.5 2.2 2.2 3.5 5.2 3.5 8.4 0 6.9-5.6 12.9-11.9 12.9z"/>
-          </svg>
-          Beställ via WhatsApp
+          <svg viewBox="0 0 32 32"><path fill="currentColor" d="M19.1 17.6c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-.9 1.1-.2.2-.3.2-.6.1s-1.2-.5-2.3-1.5c-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2.1-.4 0-.5 0-.2-.7-1.6-1-2.1-.3-.5-.5-.4-.7-.4h-.6c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.3s1 2.7 1.1 2.9c.2.3 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4 0 0-.1 0-.3-.2z"/><path fill="currentColor" d="M27.6 4.4C24.9 1.7 21.3.2 17.4.2 8.9.2 2 7.1 2 15.6c0 2.7.7 5.2 2 7.4L2 31.8l8.9-2.3c2.1 1.2 4.5 1.9 6.9 1.9 8.5 0 15.4-6.9 15.4-15.4 0-3.9-1.5-7.5-4.2-10.2zM17.8 28c-2.2 0-4.3-.6-6.1-1.7l-.4-.2-5.3 1.4 1.4-5.2-.2-.4C6 20 5.4 18 5.4 15.7 5.4 8.8 10.9 3.2 17.8 3.2c3.2 0 6.2 1.2 8.4 3.5 2.2 2.2 3.5 5.2 3.5 8.4 0 6.9-5.6 12.9-11.9 12.9z"/></svg>
+          WhatsApp
         </button>
 
         <button id="mailBtn" class="btn btn-mail" disabled>
-          <!-- Kuvert ikon -->
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z"/>
-          </svg>
-          Beställ via e-post
+          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5L4 8V6l8 5 8-5v2Z"/></svg>
+          E-post
         </button>
       </div>
 
@@ -167,137 +216,60 @@
 
     <section class="card" style="text-align:center">
       <h2>Om Lukas</h2>
-      <p>
-        Hej! Jag heter Lukas och jag 3D-printar varje ljuslykta själv i hållbart PLA-material.
-        De passar perfekt för LED-ljus och ger ett varmt, mysigt sken – en fin present för bara 5 € styck!
-      </p>
+      <p>Hej! Jag heter Lukas och jag 3D-printar varje ljuslykta själv i hållbart PLA-material.
+      De passar perfekt för LED-ljus och ger ett varmt, mysigt sken – en fin present för bara 5 € styck!</p>
     </section>
   </div>
 
-  <footer>
-    © 2025 Lukas | 3D-printade ljuslyktor för LED-ljus | Handgjorda i Finland
-  </footer>
+  <footer>© 2025 Lukas | 3D-printade ljuslyktor för LED-ljus | Handgjorda i Finland</footer>
 
   <script>
-    // ========= Konfiguration =========
-    const PRICE_EUR = 5;
-    const WHATSAPP_NUMBER = "358505298881"; // ex: 358401234567
-    const EMAIL_ADDRESS   = "martin.tylli@anvianet.fi";          // byt till riktig adress
+    // ====== Karusell ======
+    const track = document.getElementById("carousel-track");
+    const dotsContainer = document.getElementById("dots");
+    const images = track.querySelectorAll("img");
+    let index = 0;
 
-    // ========= Element =========
-    const qtyEl   = document.getElementById('qty');
-    const minusEl = document.getElementById('minus');
-    const plusEl  = document.getElementById('plus');
-    const colorEl = document.getElementById('color');
-    const nameEl  = document.getElementById('name');
-    const noteEl  = document.getElementById('note');
-    const priceEl = document.getElementById('priceTag');
-    const waBtn   = document.getElementById('waBtn');
-    const mailBtn = document.getElementById('mailBtn');
+    images.forEach((_, i) => {
+      const dot = document.createElement("div");
+      dot.className = "dot" + (i===0?" active":"");
+      dot.addEventListener("click", ()=>showSlide(i));
+      dotsContainer.appendChild(dot);
+    });
+    const dots = dotsContainer.querySelectorAll(".dot");
 
-    // ===== Hjälpfunktioner =====
-    function parseQty() {
-      const v = qtyEl.value.trim();
-      if (v === "") return NaN;
-      const n = parseInt(v, 10);
-      return Number.isFinite(n) ? n : NaN;
+    function showSlide(i){
+      index = (i + images.length) % images.length;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((d,j)=>d.classList.toggle("active", j===index));
     }
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+    document.querySelector(".carousel-button.next").onclick = ()=>showSlide(index+1);
+    document.querySelector(".carousel-button.prev").onclick = ()=>showSlide(index-1);
 
-    function refreshUI(){
-      const q = parseQty();
-      const valid = Number.isFinite(q) && q >= 1;
-      priceEl.textContent = valid ? `Summa: ${q * PRICE_EUR} €` : "Summa: –";
-      waBtn.disabled = !valid;
-      mailBtn.disabled = !valid;
-    }
-
-    // Tillåt tomt fält när man skriver; klampa först vid blur
-    qtyEl.addEventListener('input', refreshUI);
-    qtyEl.addEventListener('blur', () => {
-      let q = parseQty();
-      if (!Number.isFinite(q) || q < 1) q = 1;
-      q = clamp(q, 1, 99);
-      qtyEl.value = q;
-      refreshUI();
+    // Swipe-stöd
+    let startX=0;
+    track.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
+    track.addEventListener("touchend", e=>{
+      const diff = e.changedTouches[0].clientX - startX;
+      if (Math.abs(diff)>50) showSlide(index - Math.sign(diff));
     });
 
-    // + / −: första + från tomt blir 1 (inte 2)
-    minusEl.addEventListener('click', () => {
-      let q = parseQty();
-      if (!Number.isFinite(q)) q = 1;
-      else q = clamp(q - 1, 1, 99);
-      qtyEl.value = q;
-      qtyEl.dispatchEvent(new Event('input'));
-    });
-    plusEl.addEventListener('click', () => {
-      let q = parseQty();
-      if (!Number.isFinite(q)) q = 0; // starta från 0 → +1 = 1
-      q = clamp(q + 1, 1, 99);
-      qtyEl.value = q;
-      qtyEl.dispatchEvent(new Event('input'));
-    });
-
-    // Startläge
-    refreshUI();
-
-    // Bygg beställningstext
-    function buildMessage(q){
-      const color = colorEl.value.trim();
-      const buyer = nameEl.value.trim();
-      const note  = noteEl.value.trim();
-      const lines = [
-        "Hej Lukas! 👋",
-        `Jag vill beställa ${q} st 3D-printade ljuslyktor.`,
-        color ? `Färg: ${color}` : null,
-        `Pris: ${PRICE_EUR} € / st`,
-        `Summa: ${q * PRICE_EUR} €`,
-        buyer ? `Namn: ${buyer}` : null,
-        note  ? `Meddelande: ${note}` : null,
-        "",
-        "Leverans eller avhämtning kommer vi överens om här i chatten. 🕯️",
-        "Skickat via hemsidan ✅"
-      ].filter(Boolean);
-      return lines.join("\n");
-    }
-
-    // Nollställ formuläret
-    function resetForm(){
-      qtyEl.value = "";
-      colorEl.value = "";
-      nameEl.value = "";
-      noteEl.value = "";
-      refreshUI();
-    }
-
-    // Öppna WhatsApp
-    waBtn.addEventListener('click', () => {
-      const q = parseQty();
-      if (!Number.isFinite(q) || q < 1) return;
-      if (!WHATSAPP_NUMBER || /[^\d]/.test(WHATSAPP_NUMBER)){
-        alert("Konfigurera ditt WhatsApp-nummer i koden (utan + och mellanslag).");
-        return;
-      }
-      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildMessage(q))}`;
-      window.open(url, "_blank");
-      resetForm();
-    });
-
-    // Öppna e-post
-    mailBtn.addEventListener('click', () => {
-      const q = parseQty();
-      if (!Number.isFinite(q) || q < 1) return;
-      if (!EMAIL_ADDRESS){
-        alert("Ange e-postadress i koden.");
-        return;
-      }
-      const subject = encodeURIComponent("Beställning av ljuslyktor");
-      const body    = encodeURIComponent(buildMessage(q));
-      window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-      resetForm();
-    });
+    // ====== Beställningslogik (kortad version) ======
+    const PRICE_EUR=5, WA="358505298881", EMAIL="martin.tylli@anvianet.fi";
+    const qty=document.getElementById("qty"), color=document.getElementById("color"),
+          name=document.getElementById("name"), note=document.getElementById("note"),
+          price=document.getElementById("priceTag"), waBtn=document.getElementById("waBtn"),
+          mailBtn=document.getElementById("mailBtn");
+    function qVal(){const v=qty.value.trim();return v===""?NaN:parseInt(v,10)}
+    function upd(){const q=qVal();const ok=Number.isFinite(q)&&q>=1;price.textContent=ok?`Summa: ${q*PRICE_EUR} €`:"Summa: –";waBtn.disabled=mailBtn.disabled=!ok}
+    qty.oninput=upd; qty.onblur=()=>{let q=qVal();if(!Number.isFinite(q)||q<1)q=1;qty.value=q;upd()}
+    document.getElementById("minus").onclick=()=>{let q=qVal();if(!Number.isFinite(q))q=1;else q=Math.max(1,q-1);qty.value=q;upd()}
+    document.getElementById("plus").onclick=()=>{let q=qVal();if(!Number.isFinite(q))q=0;q=Math.min(99,q+1);qty.value=q;upd()}
+    function msg(q){return[`Hej Lukas! 👋`,`Jag vill beställa ${q} st 3D-printade ljuslyktor.`,color.value?`Färg: ${color.value}`:"",`Pris: ${PRICE_EUR} € /st`,`Summa: ${q*PRICE_EUR} €`,name.value?`Namn: ${name.value}`:"",note.value?`Meddelande: ${note.value}`:"","",`Leverans eller avhämtning kommer vi överens om här i chatten. 🕯️`,"Skickat via hemsidan ✅"].filter(Boolean).join("\n")}
+    function reset(){qty.value="";color.value="";name.value="";note.value="";upd()}
+    waBtn.onclick=()=>{const q=qVal();if(!Number.isFinite(q)||q<1)return;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg(q))}`,"_blank");reset()}
+    mailBtn.onclick=()=>{const q=qVal();if(!Number.isFinite(q)||q<1)return;window.location.href=`mailto:${EMAIL}?subject=${encodeURIComponent("Beställning av ljuslyktor")}&body=${encodeURIComponent(msg(q))}`;reset()}
+    upd();
   </script>
 </body>
 </html>
-
-
