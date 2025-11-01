@@ -27,23 +27,28 @@
     /* ===== Bildkarusell ===== */
     .carousel {
       position: relative;
-      width: 100%;
-      max-width: 400px;
+      width: 90%;
+      max-width: 500px;
       margin: 20px auto;
       overflow: hidden;
       border-radius: 14px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       background: #fff;
+      aspect-ratio: 3 / 4; /* proportion på ramen */
     }
     .carousel-track {
       display: flex;
       transition: transform 0.4s ease;
     }
-    .carousel img {
+    .carousel-slide {
+      flex: 0 0 100%;
+    }
+    .carousel-slide img {
+      display: block;
       width: 100%;
       height: auto;
-      user-select: none;
-      pointer-events: none;
+      object-fit: contain; /* ingen beskärning */
+      background: #0000;
     }
     .carousel-button {
       position: absolute;
@@ -146,13 +151,15 @@
     <!-- ===== Bildkarusell ===== -->
     <section class="carousel" aria-label="Bilder på ljuslyktor">
       <button class="carousel-button prev" aria-label="Föregående bild">❮</button>
+
       <div class="carousel-track" id="carousel-track">
-        <img src="Ljuslykta1.jpg" alt="3D-printad ljuslykta 1">
-        <img src="Ljuslykta2.jpg" alt="3D-printad ljuslykta 2">
-        <img src="Ljuslykta3.jpg" alt="3D-printad ljuslykta 3">
-        <img src="Ljuslykta4.jpg" alt="3D-printad ljuslykta 4">
-        <img src="Ljuslykta5.jpg" alt="3D-printad ljuslykta 5">
+        <div class="carousel-slide"><img src="Ljuslykta1.jpg" alt="3D-printad ljuslykta 1"></div>
+        <div class="carousel-slide"><img src="Ljuslykta2.jpg" alt="3D-printad ljuslykta 2"></div>
+        <div class="carousel-slide"><img src="Ljuslykta3.jpg" alt="3D-printad ljuslykta 3"></div>
+        <div class="carousel-slide"><img src="Ljuslykta4.jpg" alt="3D-printad ljuslykta 4"></div>
+        <div class="carousel-slide"><img src="Ljuslykta5.jpg" alt="3D-printad ljuslykta 5"></div>
       </div>
+
       <button class="carousel-button next" aria-label="Nästa bild">❯</button>
     </section>
     <div class="dots" id="dots"></div>
@@ -227,10 +234,10 @@
     // ====== Karusell ======
     const track = document.getElementById("carousel-track");
     const dotsContainer = document.getElementById("dots");
-    const images = track.querySelectorAll("img");
+    const slides = track.querySelectorAll(".carousel-slide");
     let index = 0;
 
-    images.forEach((_, i) => {
+    slides.forEach((_, i) => {
       const dot = document.createElement("div");
       dot.className = "dot" + (i===0?" active":"");
       dot.addEventListener("click", ()=>showSlide(i));
@@ -239,22 +246,22 @@
     const dots = dotsContainer.querySelectorAll(".dot");
 
     function showSlide(i){
-      index = (i + images.length) % images.length;
+      index = (i + slides.length) % slides.length;
       track.style.transform = `translateX(-${index * 100}%)`;
       dots.forEach((d,j)=>d.classList.toggle("active", j===index));
     }
     document.querySelector(".carousel-button.next").onclick = ()=>showSlide(index+1);
     document.querySelector(".carousel-button.prev").onclick = ()=>showSlide(index-1);
 
-    // Swipe-stöd
+    // Swipe
     let startX=0;
     track.addEventListener("touchstart", e=>startX=e.touches[0].clientX);
     track.addEventListener("touchend", e=>{
-      const diff = e.changedTouches[0].clientX - startX;
-      if (Math.abs(diff)>50) showSlide(index - Math.sign(diff));
+      const diff=e.changedTouches[0].clientX-startX;
+      if(Math.abs(diff)>50)showSlide(index - Math.sign(diff));
     });
 
-    // ====== Beställningslogik (kortad version) ======
+    // ====== Beställningslogik ======
     const PRICE_EUR=5, WA="358505298881", EMAIL="martin.tylli@anvianet.fi";
     const qty=document.getElementById("qty"), color=document.getElementById("color"),
           name=document.getElementById("name"), note=document.getElementById("note"),
@@ -268,9 +275,4 @@
     function msg(q){return[`Hej Lukas! 👋`,`Jag vill beställa ${q} st 3D-printade ljuslyktor.`,color.value?`Färg: ${color.value}`:"",`Pris: ${PRICE_EUR} € /st`,`Summa: ${q*PRICE_EUR} €`,name.value?`Namn: ${name.value}`:"",note.value?`Meddelande: ${note.value}`:"","",`Leverans eller avhämtning kommer vi överens om här i chatten. 🕯️`,"Skickat via hemsidan ✅"].filter(Boolean).join("\n")}
     function reset(){qty.value="";color.value="";name.value="";note.value="";upd()}
     waBtn.onclick=()=>{const q=qVal();if(!Number.isFinite(q)||q<1)return;window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg(q))}`,"_blank");reset()}
-    mailBtn.onclick=()=>{const q=qVal();if(!Number.isFinite(q)||q<1)return;window.location.href=`mailto:${EMAIL}?subject=${encodeURIComponent("Beställning av ljuslyktor")}&body=${encodeURIComponent(msg(q))}`;reset()}
-    upd();
-  </script>
-</body>
-</html>
-
+    mailBtn.onclick=()=>{const q=qVal();if(!Number.isFinite(q)||q<1)return;window.location.href=`mailto:${EMAIL}?subject=${encodeURIComponent("
