@@ -119,7 +119,7 @@
 <body>
 <header>
   <h1>Lukas säljer ljuslyktor</h1>
-  <p class="lead">Vackra 3D-printade lyktor för LED-ljus – endast 5 € styck inklusive LED-ljus!</p>
+  <p class="lead">Vackra 3D-printade lyktor för LED-ljus – 5 € styck inklusive LED-ljus!</p>
 </header>
 
 <div class="wrap">
@@ -216,7 +216,7 @@ const GAS_SECRET   = "jakobstad";
 // Färger i listan
 const COLORS = [
   "Mörkgrön","Vit","Svart","Grå glitter","Lila glitter",
-  "Röd glitter","Grön glitter","Självlysande grön"
+  "Röd glitter","Grön glitter","Lysande grön"
 ];
 
 /* ======= Karusell ======= */
@@ -327,31 +327,67 @@ function buildMessage(oid){
 }
 
 /* ======= Google Sheets-logg ======= */
-async function logOrderToSheet(payload){
+<script>
+function logOrderToSheet(payload){
+  // 1) Försök med fetch JSON (fire-and-forget)
   try{
-    await fetch(GAS_ENDPOINT, {
+    fetch(GAS_ENDPOINT, {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...payload, secret: GAS_SECRET })
     });
   }catch(_){ /* ignoreras */ }
+
+  // 2) Robust fallback: osynlig form POST (urlencoded) – funkar i alla webbläsare
+  try{
+    const iframeId = "gs-log-iframe";
+    let iframe = document.getElementById(iframeId);
+    if (!iframe){
+      iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.id = iframeId;
+      document.body.appendChild(iframe);
+    }
+
+    const form = document.createElement("form");
+    form.style.display = "none";
+    form.method = "POST";
+    form.action = GAS_ENDPOINT;
+    form.target = iframeId; // postas till det dolda iframet
+
+    const flat = (obj, prefix="") => {
+      const out = {};
+      for (const [k, v] of Object.entries(obj)){
+        if (v && typeof v === "object" && !Array.isArray(v)){
+          const inner = flat(v, prefix ? `${prefix}.${k}` : k);
+          Object.assign(out, inner);
+        } else {
+          out[prefix ? `${prefix}.${k}` : k] = v;
+        }
+      }
+      return out;
+    };
+
+    const data = flat({ ...payload, secret: GAS_SECRET });
+    // colors som JSON-sträng separat (behåller originalstrukturen)
+    data.colors = JSON.stringify(payload.colors || {});
+
+    for (const [name, value] of Object.entries(data)){
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = name;
+      input.value = typeof value === "number" ? String(value) : (value ?? "");
+      form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(()=> form.remove(), 1000); // städa bort
+  }catch(_){ /* ignoreras */ }
 }
-function buildPayload(oid){
-  const q = totalQty();
-  return {
-    orderId: oid,
-    totalQty: q,
-    subtotal: q * PRICE,
-    shipping: { type: shipping.type, price: shipping.price },
-    total: q * PRICE + shipping.price,
-    name: nameI.value || "",
-    note: note.value || "",
-    colors: state,
-    userAgent: navigator.userAgent,
-    referrer: document.referrer
-  };
-}
+</script>
+
 
 /* ======= Skicka & reset ======= */
 function resetForm(){
@@ -387,4 +423,5 @@ renderColors(); updateTotals();
 </script>
 </body>
 </html>
+
 
