@@ -11,10 +11,10 @@
       --bg:linear-gradient(135deg,#f9fafb 0%,#eef2ff 40%,#fff7ed 100%);
       --ink:#111827; --muted:#6b7280;
       --card-bg:rgba(255,255,255,0.7); --card-brd:rgba(255,255,255,0.5);
-      --wa:#22c55e; --mail:#fbbf24;
+      --wa:#22c55e; --mail:#fbbf24; --cta:#60a5fa;
       --pill-bg:#fff7e2; --pill-brd:#f1d07a;
       --shadow:0 10px 30px rgba(0,0,0,.10); --radius:16px;
-      --num:#000; /* siffror alltid svarta */
+      --num:#000;
     }
     @media (prefers-color-scheme: dark){
       :root{
@@ -57,7 +57,7 @@
     .dot{width:8px;height:8px;border-radius:999px;background:#c7c7c7}
     .dot.active{width:22px;background:#6b7280}
 
-    /* Formulär */
+    /* Form */
     label{font-weight:700;font-size:15px}
     input[type="text"],textarea{
       width:100%;padding:12px 14px;border:1px solid rgba(0,0,0,.08);
@@ -90,10 +90,8 @@
       display:inline-block;padding:10px 18px;border-radius:999px;color:var(--num);
     }
 
-    /* Totalt antal – ljus chip, alltid läsbar i mörkt läge */
-    .total-row{
-      display:flex;align-items:center;justify-content:space-between;gap:12px;
-    }
+    /* Totalt antal-chip */
+    .total-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .total-chip{
       display:inline-block;min-width:72px;text-align:center;
       padding:8px 14px;border-radius:999px;background:#fff;color:#111827;
@@ -103,7 +101,14 @@
     .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;
       border-radius:999px;border:none;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}
-    .btn-wa{background:var(--wa);color:#0b1220}.btn-mail{background:var(--mail);color:#0b1220}
+    .btn-primary{background:var(--cta);color:#0b1220}
+    .btn-wa{background:var(--wa);color:#0b1220}
+    .btn-mail{background:var(--mail);color:#0b1220}
+
+    /* Konfirmationsvy */
+    .summary-list{list-style:none;padding-left:0;margin:0}
+    .summary-list li{padding:6px 0;border-bottom:1px dashed rgba(0,0,0,.12)}
+    .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#fff;border:1px solid var(--card-brd);color:#111827;font-weight:700}
 
     footer{text-align:center;color:var(--muted);padding:20px 0 40px}
   </style>
@@ -111,7 +116,7 @@
 <body>
 <header>
   <h1>Lukas säljer ljuslyktor</h1>
-  <p class="lead">Vackra 3D-printade lyktor för LED-ljus – 5€/st</p>
+  <p class="lead">Vackra 3D-printade lyktor för LED-ljus – 5 € styck!</p>
 </header>
 
 <div class="wrap">
@@ -132,23 +137,20 @@
     <div class="dots" id="dots"></div>
   </section>
 
-  <!-- Beställning -->
-  <section class="card" style="max-width:640px">
-    <h2 style="text-align:center;margin-top:0">Beställ via WhatsApp eller e-post</h2>
+  <!-- Steg 1: formulär -->
+  <section id="formCard" class="card" style="max-width:640px">
+    <h2 style="text-align:center;margin-top:0">Beställning</h2>
 
-    <!-- Totalt antal -->
     <div class="row total-row">
       <label>Totalt antal</label>
       <span id="totalQty" class="total-chip">0 st</span>
     </div>
 
-    <!-- Färger & antal -->
     <div class="row">
       <label>Färg & antal</label>
       <div id="colorList" class="color-list"></div>
     </div>
 
-    <!-- Frakt -->
     <div class="row">
       <label>Leverans eller hämtning</label>
       <div class="ship-row">
@@ -157,13 +159,11 @@
       </div>
     </div>
 
-    <!-- Leveransadress (visas vid Leverans) -->
     <div class="row" id="addressRow" style="display:none">
       <label for="address">Leveransadress</label>
       <input id="address" type="text" placeholder="Gatuadress, postnummer och ort" />
     </div>
 
-    <!-- Kundinfo -->
     <div class="row">
       <label for="name">Ditt namn</label>
       <input id="name" type="text" placeholder="För- och efternamn (frivilligt)" />
@@ -173,23 +173,43 @@
       <textarea id="note" placeholder="Önskemål eller avhämtningstid – frivilligt"></textarea>
     </div>
 
-    <!-- Summa -->
     <div style="text-align:center">
       <span class="price-line" id="priceTag">Summa: –</span>
     </div>
 
-    <!-- Knappar -->
     <div class="actions">
-      <button id="waBtn" class="btn btn-wa" disabled>WhatsApp</button>
-      <button id="mailBtn" class="btn btn-mail" disabled>E-post</button>
+      <button id="nextBtn" class="btn btn-primary" disabled>Gå vidare</button>
     </div>
 
-    <p style="text-align:center;color:var(--muted)">
-      Knappen öppnar din app med färdig text — du behöver bara skicka.<br>
-      <strong>Leverans eller avhämtning bestämmer vi i WhatsApp/E-post.</strong>
+    <p style="text-align:center;color:var(--muted);margin-top:8px">
+      Du får en sammanfattning att granska innan du skickar din beställning.
     </p>
   </section>
 
+  <!-- Steg 2: sammanfattning & kanaler -->
+  <section id="confirmCard" class="card" style="max-width:640px; display:none">
+    <h2 style="text-align:center;margin-top:0">Tack! Granska beställningen</h2>
+    <p style="text-align:center;color:var(--muted);margin:0 0 8px">
+      Allt ser bra ut? Välj hur du vill skicka: WhatsApp eller E-post.
+    </p>
+
+    <ul id="summaryList" class="summary-list"></ul>
+
+    <div style="text-align:center;margin-top:8px">
+      <span class="pill" id="summaryTotal">Summa: –</span>
+    </div>
+
+    <div class="actions" style="margin-top:14px">
+      <button id="waBtn" class="btn btn-wa">WhatsApp</button>
+      <button id="mailBtn" class="btn btn-mail">E-post</button>
+    </div>
+
+    <div class="actions" style="margin-top:6px">
+      <button id="backBtn" class="btn">Tillbaka & ändra</button>
+    </div>
+  </section>
+
+  <!-- Om Lukas -->
   <section class="card" style="max-width:720px; text-align:center">
     <h2 style="margin:0 0 8px">Om Lukas</h2>
     <p style="margin:0; color:var(--muted)">
@@ -207,7 +227,7 @@ const PRICE = 5;
 const WA_NUMBER = "358505298881";
 const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";
 
-/* Byt till din aktiva /exec-URL + hemlighet */
+/* Din aktiva /exec-URL + hemlighet */
 const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwlTlLZZ7pPDaRbYvI6N3sM3MZRNnBq7htB2EZVOl_jRKKDl89PE0ssYbJNvHknpqjv/exec";
 const GAS_SECRET   = "jakobstad";
 
@@ -243,6 +263,24 @@ track.addEventListener("touchend", e=>{
   if (Math.abs(diff) > 50) show(idx - Math.sign(diff));
 }, {passive:true});
 
+/* ======= Steg-hantering ======= */
+const formCard    = document.getElementById("formCard");
+const confirmCard = document.getElementById("confirmCard");
+const nextBtn     = document.getElementById("nextBtn");
+const backBtn     = document.getElementById("backBtn");
+
+function goToSummary(){
+  renderSummary();
+  formCard.style.display = "none";
+  confirmCard.style.display = "block";
+  window.scrollTo({ top: confirmCard.offsetTop - 20, behavior: "smooth" });
+}
+function goBack(){
+  confirmCard.style.display = "none";
+  formCard.style.display = "block";
+  window.scrollTo({ top: formCard.offsetTop - 20, behavior: "smooth" });
+}
+
 /* ======= Order-state ======= */
 const state = Object.fromEntries(COLORS.map(c => [c, 0]));
 let shipping = { type: "pickup", price: 0 };
@@ -252,8 +290,6 @@ const totalQtyEl = document.getElementById("totalQty");
 const nameI = document.getElementById("name");
 const note = document.getElementById("note");
 const priceEl = document.getElementById("priceTag");
-const waBtn = document.getElementById("waBtn");
-const mailBtn = document.getElementById("mailBtn");
 const addressRow = document.getElementById("addressRow");
 const addressI   = document.getElementById("address");
 
@@ -288,7 +324,7 @@ function updateTotals(){
   const q = totalQty();
   totalQtyEl.textContent = `${q} st`;
   priceEl.textContent = q ? `Summa: ${q*PRICE + shipping.price} €` : "Summa: –";
-  waBtn.disabled = mailBtn.disabled = q < 1;
+  nextBtn.disabled = q < 1;
 }
 document.querySelectorAll(".ship-option").forEach(el=>{
   el.addEventListener("click", ()=>{
@@ -302,7 +338,62 @@ document.querySelectorAll(".ship-option").forEach(el=>{
   });
 });
 
-/* ======= Plain-text-meddelande ======= */
+/* ======= Sammanfattning ======= */
+const summaryList  = document.getElementById("summaryList");
+const summaryTotal = document.getElementById("summaryTotal");
+
+function renderSummary(){
+  const q = totalQty();
+  const lines = [];
+
+  summaryList.innerHTML = "";
+
+  // Totalt
+  const li0 = document.createElement("li");
+  li0.textContent = "Totalt antal: " + q + " st";
+  summaryList.appendChild(li0);
+
+  // Färger
+  const li1 = document.createElement("li");
+  li1.innerHTML = "<strong>Önskade färger:</strong>";
+  const ul = document.createElement("ul");
+  ul.style.margin = "6px 0 0 16px";
+  for (const [c, n] of Object.entries(state)) {
+    if (n > 0) {
+      const li = document.createElement("li");
+      li.textContent = `${c}: ${n} st`;
+      ul.appendChild(li);
+    }
+  }
+  li1.appendChild(ul);
+  summaryList.appendChild(li1);
+
+  // Leverans
+  const li2 = document.createElement("li");
+  const shipTxt = shipping.type === "pickup" ? "Hämtning (0 €)" : `Leverans (${shipping.price} €)`;
+  li2.innerHTML = `<strong>Leverans:</strong> ${shipTxt}`;
+  if (shipping.type === "delivery" && addressI.value.trim()){
+    li2.innerHTML += `<br><strong>Adress:</strong> ${addressI.value.trim()}`;
+  }
+  summaryList.appendChild(li2);
+
+  // Namn/meddelande
+  if (nameI.value) {
+    const li3 = document.createElement("li");
+    li3.innerHTML = `<strong>Namn:</strong> ${nameI.value}`;
+    summaryList.appendChild(li3);
+  }
+  if (note.value) {
+    const li4 = document.createElement("li");
+    li4.innerHTML = `<strong>Meddelande:</strong> ${note.value}`;
+    summaryList.appendChild(li4);
+  }
+
+  // Summa
+  summaryTotal.textContent = `Summa: ${q*PRICE + shipping.price} €`;
+}
+
+/* ======= Meddelande ======= */
 function buildMessage(){
   const q = totalQty();
   const lines = [];
@@ -330,7 +421,7 @@ function buildPayload(channel, waText){
   return {
     secret: GAS_SECRET,
     channel,                 // 'whatsapp' | 'email'
-    waText,                  // sparas i ark vid behov
+    waText,                  // sparas (plain text)
     totalQty: q,
     shipping: { type: shipping.type, price: shipping.price },
     total: q * PRICE + shipping.price,
@@ -343,9 +434,8 @@ function buildPayload(channel, waText){
   };
 }
 
-/* ======= Loggning till Google Sheets ======= */
+/* ======= Logga till Sheets ======= */
 function logOrderToSheet(payload){
-  // 1) JSON-försök
   try{
     fetch(GAS_ENDPOINT, {
       method: "POST",
@@ -354,8 +444,6 @@ function logOrderToSheet(payload){
       body: JSON.stringify(payload)
     });
   }catch(_){}
-
-  // 2) Fallback via dold form (urlencoded)
   try{
     const iframeId = "gs-log-iframe";
     let iframe = document.getElementById(iframeId);
@@ -406,30 +494,25 @@ function resetForm(){
   if (addressI) addressI.value = "";
   nameI.value = ""; note.value = "";
   renderColors(); updateTotals(); addressRow.style.display = "none";
+  goBack();
 }
 
 document.getElementById("waBtn").addEventListener("click", ()=>{
-  if (totalQty() < 1) return;
   const msg = buildMessage();
   const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  window.location.href = url;       // öppna WA
-  setTimeout(()=> {                 // logga efter liten delay
-    logOrderToSheet(buildPayload('whatsapp', msg));
-    resetForm();
-  }, 300);
+  window.location.href = url;
+  setTimeout(()=> { logOrderToSheet(buildPayload('whatsapp', msg)); resetForm(); }, 300);
 });
-
 document.getElementById("mailBtn").addEventListener("click", ()=>{
-  if (totalQty() < 1) return;
   const msg = buildMessage();
   const subject = encodeURIComponent("Beställning av ljuslyktor");
   const body    = encodeURIComponent(msg);
   window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-  setTimeout(()=> {
-    logOrderToSheet(buildPayload('email', msg));
-    resetForm();
-  }, 300);
+  setTimeout(()=> { logOrderToSheet(buildPayload('email', msg)); resetForm(); }, 300);
 });
+
+nextBtn.addEventListener("click", goToSummary);
+backBtn.addEventListener("click", goBack);
 
 /* init */
 renderColors(); updateTotals();
