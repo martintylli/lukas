@@ -57,7 +57,7 @@
     .dot{width:8px;height:8px;border-radius:999px;background:#c7c7c7}
     .dot.active{width:22px;background:#6b7280}
 
-    /* Order */
+    /* Form */
     label{font-weight:700;font-size:15px}
     input[type="text"],textarea{
       width:100%;padding:12px 14px;border:1px solid rgba(0,0,0,.08);
@@ -96,8 +96,16 @@
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;
       border-radius:999px;border:none;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}
     .btn-wa{background:var(--wa);color:#0b1220}.btn-mail{background:var(--mail);color:#0b1220}
+    .btn-ghost{background:#e5e7eb;color:#111827}
 
-    footer{text-align:center;color:var(--muted);padding:20px 0 40px}
+    .muted{color:var(--muted)}
+
+    /* Views */
+    .view{display:none}
+    .view.active{display:block}
+    .summary-list{margin:0;padding-left:18px}
+    .summary-line{display:flex;justify-content:space-between;gap:10px}
+    .badge{display:inline-block;padding:4px 10px;border-radius:999px;background:#eef2ff;border:1px solid #dbeafe;font-weight:700}
   </style>
 </head>
 <body>
@@ -124,9 +132,9 @@
     <div class="dots" id="dots"></div>
   </section>
 
-  <!-- Beställning -->
-  <section class="card" style="max-width:640px">
-    <h2 style="text-align:center;margin-top:0">Beställ via WhatsApp eller e-post</h2>
+  <!-- ===== VIEW 1: FORMULÄR ===== -->
+  <section id="viewForm" class="card view active" style="max-width:640px">
+    <h2 style="text-align:center;margin-top:0">Beställning</h2>
 
     <div class="row">
       <label>Totalt antal</label>
@@ -165,16 +173,52 @@
     </div>
 
     <div class="actions">
-      <button id="waBtn" class="btn btn-wa" disabled>WhatsApp</button>
-      <button id="mailBtn" class="btn btn-mail" disabled>E-post</button>
+      <button id="continueBtn" class="btn btn-ghost" disabled>Fortsätt</button>
     </div>
 
-    <p style="text-align:center;color:var(--muted)">
-      Knappen öppnar din app med färdig text — du behöver bara skicka.<br>
-      <strong>Leverans eller avhämtning bestämmer vi i WhatsApp/E-post.</strong>
+    <p class="muted" style="text-align:center">
+      Du får bekräfta på nästa sida och välja WhatsApp eller e-post.
     </p>
   </section>
 
+  <!-- ===== VIEW 2: BEKRÄFTELSE ===== -->
+  <section id="viewConfirm" class="card view" style="max-width:640px">
+    <h2 style="text-align:center;margin-top:0">Tack för beställningen! 🎉</h2>
+    <p class="muted" style="text-align:center;margin-top:-4px">
+      Kolla sammanfattningen nedan. Välj sedan hur du vill kontakta säljaren.
+    </p>
+
+    <div style="margin:10px 0">
+      <div class="summary-line"><span>Order-ID</span><span class="badge" id="summaryOrderId">–</span></div>
+      <div class="summary-line"><span>Antal totalt</span><strong id="summaryQty">–</strong></div>
+      <div class="summary-line"><span>Leverans</span><strong id="summaryShipping">–</strong></div>
+      <div class="summary-line" id="summaryAddressRow" style="display:none;"><span>Adress</span><strong id="summaryAddress">–</strong></div>
+    </div>
+
+    <div>
+      <h3 style="margin:12px 0 6px;font-size:18px">Färger</h3>
+      <ul id="summaryColors" class="summary-list"></ul>
+    </div>
+
+    <div style="margin-top:10px">
+      <div class="summary-line"><span>Summa</span><strong id="summaryTotal">–</strong></div>
+    </div>
+
+    <div class="actions" style="margin-top:16px">
+      <button id="sendWaBtn" class="btn btn-wa">Skicka via WhatsApp</button>
+      <button id="sendMailBtn" class="btn btn-mail">Skicka via e-post</button>
+    </div>
+
+    <div class="actions" style="margin-top:8px">
+      <button id="backBtn" class="btn btn-ghost">Tillbaka och ändra</button>
+    </div>
+
+    <p class="muted" style="text-align:center">
+      Här nedanför väljer du WhatsApp/e-post för att eventuellt ge mer info och bekräfta detaljer.
+    </p>
+  </section>
+
+  <!-- Om Lukas -->
   <section class="card" style="max-width:720px; text-align:center">
     <h2 style="margin:0 0 8px">Om Lukas</h2>
     <p style="margin:0; color:var(--muted)">
@@ -192,7 +236,7 @@ const PRICE = 5;
 const WA_NUMBER = "358505298881";
 const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";
 
-// BYT till din /exec-URL:
+// BYT till din /exec-URL (du har redan gjort det):
 const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwlTlLZZ7pPDaRbYvI6N3sM3MZRNnBq7htB2EZVOl_jRKKDl89PE0ssYbJNvHknpqjv/exec";
 const GAS_SECRET   = "jakobstad";
 
@@ -232,16 +276,35 @@ track.addEventListener("touchend", e=>{
 const state = Object.fromEntries(COLORS.map(c => [c, 0]));
 let shipping = { type: "pickup", price: 0 };
 
+// Elements
 const colorList = document.getElementById("colorList");
 const totalQtyEl = document.getElementById("totalQty");
 const nameI = document.getElementById("name");
 const note = document.getElementById("note");
 const priceEl = document.getElementById("priceTag");
-const waBtn = document.getElementById("waBtn");
-const mailBtn = document.getElementById("mailBtn");
 const addressRow = document.getElementById("addressRow");
 const addressI   = document.getElementById("address");
+const continueBtn = document.getElementById("continueBtn");
 
+// Views
+const viewForm = document.getElementById("viewForm");
+const viewConfirm = document.getElementById("viewConfirm");
+
+// Confirm elements
+let pendingOrderId = null;   // sätts när vi går till bekräftelse
+let pendingMsg = "";         // plain text meddelande
+const summaryOrderId = document.getElementById("summaryOrderId");
+const summaryQty = document.getElementById("summaryQty");
+const summaryShipping = document.getElementById("summaryShipping");
+const summaryAddressRow = document.getElementById("summaryAddressRow");
+const summaryAddress = document.getElementById("summaryAddress");
+const summaryColors = document.getElementById("summaryColors");
+const summaryTotal = document.getElementById("summaryTotal");
+const sendWaBtn = document.getElementById("sendWaBtn");
+const sendMailBtn = document.getElementById("sendMailBtn");
+const backBtn = document.getElementById("backBtn");
+
+// Render färgrader
 function renderColors(){
   colorList.innerHTML = "";
   COLORS.forEach(color => {
@@ -273,7 +336,10 @@ function updateTotals(){
   const q = totalQty();
   totalQtyEl.textContent = `${q} st`;
   priceEl.textContent = q ? `Summa: ${q*PRICE + shipping.price} €` : "Summa: –";
-  waBtn.disabled = mailBtn.disabled = q < 1;
+  // Fortsätt-knappen kräver minst 1 st och vid leverans även adress
+  const needsAddress = shipping.type === "delivery";
+  const hasAddress = !needsAddress || (addressI && addressI.value.trim().length > 4);
+  continueBtn.disabled = !(q >= 1 && hasAddress);
 }
 document.querySelectorAll(".ship-option").forEach(el=>{
   el.addEventListener("click", ()=>{
@@ -286,12 +352,17 @@ document.querySelectorAll(".ship-option").forEach(el=>{
     updateTotals();
   });
 });
+if (addressI) addressI.addEventListener("input", updateTotals);
 
-/* ======= Plain text-meddelande ======= */
+/* ======= Hjälp: orderId & meddelande ======= */
+function orderId(){
+  const d = new Date(), pad = n => String(n).padStart(2,"0");
+  const rnd = Math.floor(1000 + Math.random()*9000);
+  return `LG-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}-${rnd}`;
+}
 function buildMessage(){
   const q = totalQty();
   const lines = [];
-
   lines.push("Hej Lukas!");
   lines.push(`Totalt antal: ${q} st`);
   lines.push("");
@@ -299,12 +370,10 @@ function buildMessage(){
   for (const [c, n] of Object.entries(state)) {
     if (n > 0) lines.push(`- ${c}: ${n} st`);
   }
-
   if (shipping.type === "delivery" && addressI && addressI.value.trim()) {
     lines.push("");
     lines.push(`Leveransadress: ${addressI.value.trim()}`);
   }
-
   lines.push("");
   lines.push(`Pris: ${PRICE} € / st`);
   lines.push(`Frakt: ${shipping.price} € (${shipping.type === "pickup" ? "Hämtning" : "Leverans"})`);
@@ -314,16 +383,14 @@ function buildMessage(){
   lines.push("");
   lines.push("Leverans eller avhämtning bestäms i chatten.");
   lines.push("Skickat via hemsidan");
-
   return lines.join("\n");
 }
-
 function buildPayload(channel, waText){
   const q = totalQty();
   return {
     secret: GAS_SECRET,
     channel,                 // 'whatsapp' | 'email'
-    waText,                  // hela meddelandet (sparas i kolumn Q)
+    waText,                  // hela meddelandet (sparas i arket)
     totalQty: q,
     shipping: { type: shipping.type, price: shipping.price },
     total: q * PRICE + shipping.price,
@@ -336,9 +403,9 @@ function buildPayload(channel, waText){
   };
 }
 
-/* ======= Logga till Sheets (fetch + fallback) ======= */
+/* ======= Loggning till Sheets (fetch + fallback) ======= */
 function logOrderToSheet(payload){
-  // 1) JSON-försök
+  // 1) JSON (fire-and-forget)
   try{
     fetch(GAS_ENDPOINT, {
       method: "POST",
@@ -347,8 +414,7 @@ function logOrderToSheet(payload){
       body: JSON.stringify(payload)
     });
   }catch(_){}
-
-  // 2) Fallback (urlencoded form) – funkar i alla webbläsare
+  // 2) Fallback form post (urlencoded) till dolt iframe
   try{
     const iframeId = "gs-log-iframe";
     let iframe = document.getElementById(iframeId);
@@ -358,7 +424,6 @@ function logOrderToSheet(payload){
       iframe.id = iframeId;
       document.body.appendChild(iframe);
     }
-
     const form = document.createElement("form");
     form.style.display = "none";
     form.method = "POST";
@@ -376,9 +441,7 @@ function logOrderToSheet(payload){
       }
       return out;
     };
-
     const data = flat(payload);
-    // behåll färger som JSON-sträng också
     data.colors = JSON.stringify(payload.colors || {});
     for (const [name, value] of Object.entries(data)){
       const input = document.createElement("input");
@@ -387,14 +450,90 @@ function logOrderToSheet(payload){
       input.value = typeof value === "number" ? String(value) : (value ?? "");
       form.appendChild(input);
     }
-
     document.body.appendChild(form);
     form.submit();
     setTimeout(()=> form.remove(), 800);
   }catch(_){}
 }
 
-/* ======= Skicka & reset ======= */
+/* ======= Vy-navigering ======= */
+function goToConfirm(){
+  pendingOrderId = orderId();
+  pendingMsg = buildMessage();
+
+  // Fyll sammanfattning
+  summaryOrderId.textContent = pendingOrderId;
+  const q = totalQty();
+  summaryQty.textContent = `${q} st`;
+  summaryShipping.textContent = (shipping.type === "pickup" ? "Hämtning (0 €)" : `Leverans (${shipping.price} €)`);
+  const showAddr = (shipping.type === "delivery" && addressI && addressI.value.trim());
+  summaryAddressRow.style.display = showAddr ? "flex" : "none";
+  if (showAddr) summaryAddress.textContent = addressI.value.trim();
+
+  // Lista färger
+  summaryColors.innerHTML = "";
+  let anyColor = false;
+  for (const [c,n] of Object.entries(state)){
+    if (n > 0){
+      const li = document.createElement("li");
+      li.textContent = `${c}: ${n} st`;
+      summaryColors.appendChild(li);
+      anyColor = true;
+    }
+  }
+  if (!anyColor){
+    const li = document.createElement("li");
+    li.textContent = "—";
+    summaryColors.appendChild(li);
+  }
+
+  summaryTotal.textContent = `${q*PRICE + shipping.price} €`;
+
+  // Visa vy 2
+  viewForm.classList.remove("active");
+  viewConfirm.classList.add("active");
+}
+function backToForm(){
+  // återgå utan att nollställa något
+  viewConfirm.classList.remove("active");
+  viewForm.classList.add("active");
+}
+
+/* ======= Knapphändelser ======= */
+// Fortsätt (till bekräftelse)
+continueBtn.addEventListener("click", ()=>{
+  // säkerställ krav uppfyllda
+  if (continueBtn.disabled) return;
+  goToConfirm();
+});
+
+// Skicka via WhatsApp
+sendWaBtn.addEventListener("click", ()=>{
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(pendingMsg)}`;
+  window.location.href = url;
+  // logga
+  setTimeout(()=>{
+    logOrderToSheet(buildPayload('whatsapp', pendingMsg));
+    // reset och tillbaka till formuläret
+    resetForm();
+  }, 300);
+});
+
+// Skicka via e-post
+sendMailBtn.addEventListener("click", ()=>{
+  const subject = encodeURIComponent("Beställning av ljuslyktor");
+  const body    = encodeURIComponent(pendingMsg);
+  window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
+  setTimeout(()=>{
+    logOrderToSheet(buildPayload('email', pendingMsg));
+    resetForm();
+  }, 300);
+});
+
+// Tillbaka
+backBtn.addEventListener("click", backToForm);
+
+/* ======= Reset och init ======= */
 function resetForm(){
   Object.keys(state).forEach(k => state[k] = 0);
   document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));
@@ -403,30 +542,11 @@ function resetForm(){
   if (addressI) addressI.value = "";
   nameI.value = ""; note.value = "";
   renderColors(); updateTotals(); addressRow.style.display = "none";
+  // tillbaka till formulär
+  viewConfirm.classList.remove("active");
+  viewForm.classList.add("active");
+  pendingOrderId = null; pendingMsg = "";
 }
-
-document.getElementById("waBtn").addEventListener("click", ()=>{
-  if (totalQty() < 1) return;
-  const msg = buildMessage();
-  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  window.location.href = url;       // öppna WA (säker)
-  setTimeout(()=> {                 // logga efter 300 ms
-    logOrderToSheet(buildPayload('whatsapp', msg));
-    resetForm();
-  }, 300);
-});
-
-document.getElementById("mailBtn").addEventListener("click", ()=>{
-  if (totalQty() < 1) return;
-  const msg = buildMessage();
-  const subject = encodeURIComponent("Beställning av ljuslyktor");
-  const body    = encodeURIComponent(msg);
-  window.location.href = `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-  setTimeout(()=> {
-    logOrderToSheet(buildPayload('email', msg));
-    resetForm();
-  }, 300);
-});
 
 /* init */
 renderColors(); updateTotals();
