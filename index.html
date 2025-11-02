@@ -15,6 +15,7 @@
       --pill-bg:#fff7e2; --pill-brd:#f1d07a;
       --shadow:0 10px 30px rgba(0,0,0,.10); --radius:16px;
       --num:#000; /* siffror alltid svarta */
+      --chip:#e5e7eb;
     }
     @media (prefers-color-scheme: dark){
       :root{
@@ -24,6 +25,7 @@
         --pill-bg:#1f2937; --pill-brd:#374151;
         --shadow:0 10px 30px rgba(0,0,0,.35);
         --num:#000;
+        --chip:#334155;
       }
     }
     *{box-sizing:border-box}
@@ -57,7 +59,8 @@
     .dot{width:8px;height:8px;border-radius:999px;background:#c7c7c7}
     .dot.active{width:22px;background:#6b7280}
 
-    /* Order */
+    /* Formulär */
+    h2{margin:0 0 8px;font-size:clamp(22px,4vw,28px)}
     label{font-weight:700;font-size:15px}
     input[type="text"],textarea{
       width:100%;padding:12px 14px;border:1px solid rgba(0,0,0,.08);
@@ -73,35 +76,40 @@
     }
     .mini-btn{
       width:36px;height:36px;border-radius:10px;border:1px solid rgba(0,0,0,.06);
-      background:#fff;cursor:pointer;font-size:18px;font-weight:800;
-      color:var(--num);
+      background:#fff;cursor:pointer;font-size:18px;font-weight:800;color:var(--num);
     }
     .mini-input{
       width:64px;text-align:center;padding:8px 10px;border:1px solid rgba(0,0,0,.1);
-      border-radius:10px;background:#fff;font-size:16px;
-      color:var(--num);
+      border-radius:10px;background:#fff;font-size:16px;color:var(--num);
     }
 
     .ship-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
     .ship-option{flex:1;padding:10px;border:2px solid #ddd;border-radius:12px;
-      text-align:center;cursor:pointer;background:#fff;font-weight:600;
-      color:var(--num)}
+      text-align:center;cursor:pointer;background:#fff;font-weight:600;color:var(--num)}
     .ship-option.active{border-color:#22c55e;background:#e6ffed}
 
     .price-line{
       text-align:center;margin-top:8px;font-weight:800;
       background:var(--pill-bg);border:2px solid var(--pill-brd);
-      display:inline-block;padding:10px 18px;border-radius:999px;
-      color:var(--num);
+      display:inline-block;padding:10px 18px;border-radius:999px;color:var(--num);
     }
     #totalQty{color:var(--num);font-weight:700}
 
     .actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;
       border-radius:999px;border:none;cursor:pointer;font-weight:800;box-shadow:var(--shadow)}
-    .btn-wa{background:var(--wa);color:#0b1220}.btn-mail{background:var(--mail);color:#0b1220}
+    .btn-wa{background:var(--wa);color:#0b1220}
+    .btn-mail{background:var(--mail);color:#0b1220}
+    .btn-next{background:#0ea5e9;color:#0b1220}
+    .btn-ghost{background:var(--chip);color:var(--ink)}
 
     footer{text-align:center;color:var(--muted);padding:20px 0 40px}
+
+    /* Två vyer */
+    .hidden{display:none}
+    .summary-box{background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:14px}
+    .summary-box p{margin:6px 0}
+    .summary-list{margin:8px 0 0 0;padding:0 0 0 18px}
   </style>
 </head>
 <body>
@@ -128,23 +136,20 @@
     <div class="dots" id="dots"></div>
   </section>
 
-  <!-- Beställning -->
-  <section class="card" style="max-width:640px">
-    <h2 style="text-align:center;margin-top:0">Beställ via WhatsApp eller e-post</h2>
+  <!-- Steg 1: Formulär -->
+  <section id="formSection" class="card" style="max-width:640px">
+    <h2 style="text-align:center;margin-top:0">Beställning</h2>
 
-    <!-- Totalt antal -->
     <div class="row">
       <label>Totalt antal</label>
       <div id="totalQty">0 st</div>
     </div>
 
-    <!-- Färger & antal -->
     <div class="row">
       <label>Färg & antal</label>
       <div id="colorList" class="color-list"></div>
     </div>
 
-    <!-- Frakt -->
     <div class="row">
       <label>Leverans eller hämtning</label>
       <div class="ship-row">
@@ -153,13 +158,11 @@
       </div>
     </div>
 
-    <!-- Adress vid leverans -->
     <div class="row" id="addressRow" style="display:none">
       <label for="address">Leveransadress</label>
       <input id="address" type="text" placeholder="Gatuadress, postnummer och ort" />
     </div>
 
-    <!-- Kundinfo -->
     <div class="row">
       <label for="name">Ditt namn</label>
       <input id="name" type="text" placeholder="För- och efternamn (frivilligt)" />
@@ -169,20 +172,39 @@
       <textarea id="note" placeholder="Önskemål eller avhämtningstid – frivilligt"></textarea>
     </div>
 
-    <!-- Summa -->
     <div style="text-align:center">
       <span class="price-line" id="priceTag">Summa: –</span>
     </div>
 
-    <!-- Knappar -->
     <div class="actions">
-      <button id="waBtn" class="btn btn-wa" disabled>WhatsApp</button>
-      <button id="mailBtn" class="btn btn-mail" disabled>E-post</button>
+      <button id="nextBtn" class="btn btn-next" disabled>Nästa</button>
     </div>
 
     <p style="text-align:center;color:var(--muted)">
-      Knappen öppnar din app med färdig text — du behöver bara skicka.<br>
-      <strong>Leverans eller avhämtning bestämmer vi i WhatsApp/E-post.</strong>
+      Du får se en sammanfattning innan du skickar via WhatsApp eller e-post.
+    </p>
+  </section>
+
+  <!-- Steg 2: Sammanfattning + WA/E-post -->
+  <section id="confirmSection" class="card hidden" style="max-width:640px">
+    <h2 style="text-align:center;margin-top:0">Tack för beställningen!</h2>
+
+    <div class="summary-box">
+      <p id="summaryText" style="white-space:pre-wrap"></p>
+    </div>
+
+    <div style="text-align:center;margin-top:10px">
+      <span class="price-line" id="priceTag2">Summa: –</span>
+    </div>
+
+    <div class="actions">
+      <button id="waBtn" class="btn btn-wa">WhatsApp</button>
+      <button id="mailBtn" class="btn btn-mail">E-post</button>
+      <button id="backBtn" class="btn btn-ghost">Tillbaka</button>
+    </div>
+
+    <p style="text-align:center;color:var(--muted)">
+      Knappen öppnar din app med färdig text — du behöver bara skicka.
     </p>
   </section>
 
@@ -200,14 +222,14 @@
 <script>
 /* ======= KONFIG ======= */
 const PRICE = 5;
-const WA_NUMBER = "358505298881";
+const WA_NUMBER = "358505298881";       // endast siffror
 const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";
 
-// Din publicerade GAS /exec URL (den fungerande du använde)
+// Din publicerade /exec-URL:
 const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwlTlLZZ7pPDaRbYvI6N3sM3MZRNnBq7htB2EZVOl_jRKKDl89PE0ssYbJNvHknpqjv/exec";
 const GAS_SECRET   = "jakobstad";
 
-// Färger (måste matcha GAS.COLORS)
+// Färger (måste matcha GAS)
 const COLORS = [
   "Mörkgrön","Vit","Svart","Grå glitter","Lila glitter",
   "Röd glitter","Grön glitter","Självlysande grön"
@@ -248,10 +270,15 @@ const totalQtyEl = document.getElementById("totalQty");
 const nameI = document.getElementById("name");
 const note = document.getElementById("note");
 const priceEl = document.getElementById("priceTag");
-const waBtn = document.getElementById("waBtn");
-const mailBtn = document.getElementById("mailBtn");
+const priceEl2 = document.getElementById("priceTag2");
 const addressRow = document.getElementById("addressRow");
 const addressI   = document.getElementById("address");
+const nextBtn    = document.getElementById("nextBtn");
+
+/* vyer */
+const formSection    = document.getElementById("formSection");
+const confirmSection = document.getElementById("confirmSection");
+const summaryText    = document.getElementById("summaryText");
 
 function renderColors(){
   colorList.innerHTML = "";
@@ -283,8 +310,10 @@ function totalQty(){ return Object.values(state).reduce((a,b)=>a+b,0); }
 function updateTotals(){
   const q = totalQty();
   totalQtyEl.textContent = `${q} st`;
-  priceEl.textContent = q ? `Summa: ${q*PRICE + shipping.price} €` : "Summa: –";
-  waBtn.disabled = mailBtn.disabled = q < 1;
+  const sumText = q ? `Summa: ${q*PRICE + shipping.price} €` : "Summa: –";
+  priceEl.textContent  = sumText;
+  priceEl2.textContent = sumText;
+  nextBtn.disabled = q < 1;
 }
 document.querySelectorAll(".ship-option").forEach(el=>{
   el.addEventListener("click", ()=>{
@@ -298,24 +327,18 @@ document.querySelectorAll(".ship-option").forEach(el=>{
   });
 });
 
-/* ======= Plain text-meddelande ======= */
+/* ======= Plain text-meddelande & summary ======= */
 function buildMessage(){
   const q = totalQty();
   const lines = [];
-
   lines.push("Hej Lukas!");
   lines.push(`Totalt antal: ${q} st`);
   lines.push("");
   lines.push("Önskade färger:");
-  for (const [c, n] of Object.entries(state)) {
-    if (n > 0) lines.push(`- ${c}: ${n} st`);
+  for (const [c, n] of Object.entries(state)) if (n > 0) lines.push(`- ${c}: ${n} st`);
+  if (shipping.type === "delivery" && addressI && addressI.value.trim()){
+    lines.push(""); lines.push(`Leveransadress: ${addressI.value.trim()}`);
   }
-
-  if (shipping.type === "delivery" && addressI && addressI.value.trim()) {
-    lines.push("");
-    lines.push(`Leveransadress: ${addressI.value.trim()}`);
-  }
-
   lines.push("");
   lines.push(`Pris: ${PRICE} € / st`);
   lines.push(`Frakt: ${shipping.price} € (${shipping.type === "pickup" ? "Hämtning" : "Leverans"})`);
@@ -325,19 +348,30 @@ function buildMessage(){
   lines.push("");
   lines.push("Leverans eller avhämtning bestäms i chatten.");
   lines.push("Skickat via hemsidan");
-
   return lines.join("\n");
 }
-
+function buildSummaryText(){
+  const q = totalQty();
+  let txt = `Totalt antal: ${q} st\n\nÖnskade färger:\n`;
+  for (const [c, n] of Object.entries(state)) if (n > 0) txt += `- ${c}: ${n} st\n`;
+  if (shipping.type === "delivery" && addressI && addressI.value.trim()){
+    txt += `\nLeveransadress: ${addressI.value.trim()}\n`;
+  }
+  txt += `\nPris: ${PRICE} € / st\nFrakt: ${shipping.price} € (${shipping.type === "pickup" ? "Hämtning" : "Leverans"})\n`;
+  txt += `Summa: ${q*PRICE + shipping.price} €\n`;
+  if (nameI.value) txt += `Namn: ${nameI.value}\n`;
+  if (note.value) txt += `Meddelande: ${note.value}\n`;
+  return txt;
+}
 function buildPayload(channel, waText){
   const q = totalQty();
   return {
     secret: GAS_SECRET,
     channel,                 // 'whatsapp' | 'email'
-    waText,                  // sparas i arket
+    waText,                  // hela meddelandet (sparas i sheet)
     totalQty: q,
     shipping: { type: shipping.type, price: shipping.price },
-    total: q * PRICE + shipping.price,     // TOTALSUMMA till GAS
+    total: q * PRICE + shipping.price,
     name: nameI.value || "",
     address: addressI ? (addressI.value || "") : "",
     note: note.value || "",
@@ -349,17 +383,13 @@ function buildPayload(channel, waText){
 
 /* ======= Logga till Sheets (fetch + fallback) ======= */
 function logOrderToSheet(payload){
-  // 1) JSON
   try{
-    fetch(GAS_ENDPOINT, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+    fetch(GAS_ENDPOINT, { method:"POST", mode:"no-cors",
+      headers:{ "Content-Type":"application/json" },
       body: JSON.stringify(payload)
     });
   }catch(_){}
 
-  // 2) Fallback (urlencoded form) – funkar i alla webbläsare
   try{
     const iframeId = "gs-log-iframe";
     let iframe = document.getElementById(iframeId);
@@ -369,39 +399,37 @@ function logOrderToSheet(payload){
       iframe.id = iframeId;
       document.body.appendChild(iframe);
     }
-
     const form = document.createElement("form");
-    form.style.display = "none";
-    form.method = "POST";
-    form.action = GAS_ENDPOINT;
-    form.target = iframeId;
+    form.style.display="none"; form.method="POST"; form.action=GAS_ENDPOINT; form.target=iframeId;
 
-    const flat = (obj, prefix="") => {
-      const out = {};
-      for (const [k, v] of Object.entries(obj)){
-        if (v && typeof v === "object" && !Array.isArray(v)){
-          Object.assign(out, flat(v, prefix ? `${prefix}.${k}` : k));
-        } else {
-          out[prefix ? `${prefix}.${k}` : k] = v;
-        }
-      }
-      return out;
+    const flat = (obj, prefix="")=>{
+      const out={}; for (const [k,v] of Object.entries(obj)){
+        if (v && typeof v==="object" && !Array.isArray(v)) Object.assign(out, flat(v, prefix?`${prefix}.${k}`:k));
+        else out[prefix?`${prefix}.${k}`:k]=v;
+      } return out;
     };
-
     const data = flat(payload);
     data.colors = JSON.stringify(payload.colors || {});
     for (const [name, value] of Object.entries(data)){
       const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = name;
-      input.value = typeof value === "number" ? String(value) : (value ?? "");
+      input.type="hidden"; input.name=name; input.value=typeof value==="number"?String(value):(value??"");
       form.appendChild(input);
     }
-
     document.body.appendChild(form);
     form.submit();
     setTimeout(()=> form.remove(), 800);
   }catch(_){}
+}
+
+/* ======= Navigation mellan vyer ======= */
+function toSummary(){
+  summaryText.textContent = buildSummaryText();
+  formSection.classList.add("hidden");
+  confirmSection.classList.remove("hidden");
+}
+function backToForm(){
+  confirmSection.classList.add("hidden");
+  formSection.classList.remove("hidden");
 }
 
 /* ======= Skicka & reset ======= */
@@ -413,18 +441,25 @@ function resetForm(){
   if (addressI) addressI.value = "";
   nameI.value = ""; note.value = "";
   renderColors(); updateTotals(); addressRow.style.display = "none";
+  backToForm();
 }
 
-document.getElementById("waBtn").addEventListener("click", ()=>{
+/* Knapphändelser */
+document.getElementById("nextBtn").addEventListener("click", ()=>{
   if (totalQty() < 1) return;
+  toSummary();
+});
+
+document.getElementById("backBtn").addEventListener("click", backToForm);
+
+document.getElementById("waBtn").addEventListener("click", ()=>{
   const msg = buildMessage();
-  // Öppna WhatsApp först (undvik popup-blockers), logga strax efter
-  window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.location.href = url;
   setTimeout(()=> { logOrderToSheet(buildPayload('whatsapp', msg)); resetForm(); }, 300);
 });
 
 document.getElementById("mailBtn").addEventListener("click", ()=>{
-  if (totalQty() < 1) return;
   const msg = buildMessage();
   const subject = encodeURIComponent("Beställning av ljuslyktor");
   const body    = encodeURIComponent(msg);
