@@ -128,19 +128,16 @@
   <section class="card" style="max-width:640px">
     <h2 style="text-align:center;margin-top:0">Beställ via WhatsApp eller e-post</h2>
 
-    <!-- Totalt antal (beräknas) -->
     <div class="row">
       <label>Totalt antal</label>
       <div id="totalQty">0 st</div>
     </div>
 
-    <!-- Färger & antal -->
     <div class="row">
       <label>Färg & antal</label>
       <div id="colorList" class="color-list"></div>
     </div>
 
-    <!-- Leverans / Hämtning -->
     <div class="row">
       <label>Leverans eller hämtning</label>
       <div class="ship-row">
@@ -149,13 +146,11 @@
       </div>
     </div>
 
-    <!-- Adress (endast vid leverans) -->
     <div class="row" id="addressRow" style="display:none">
       <label for="address">Leveransadress</label>
       <input id="address" type="text" placeholder="Gatuadress, postnummer och ort" />
     </div>
 
-    <!-- Kundinfo -->
     <div class="row">
       <label for="name">Ditt namn</label>
       <input id="name" type="text" placeholder="För- och efternamn (frivilligt)" />
@@ -165,12 +160,10 @@
       <textarea id="note" placeholder="Önskemål eller avhämtningstid – frivilligt"></textarea>
     </div>
 
-    <!-- Summa -->
     <div style="text-align:center">
       <span class="price-line" id="priceTag">Summa: –</span>
     </div>
 
-    <!-- Knappar -->
     <div class="actions">
       <button id="waBtn" class="btn btn-wa" disabled>WhatsApp</button>
       <button id="mailBtn" class="btn btn-mail" disabled>E-post</button>
@@ -195,12 +188,12 @@
 
 <script>
 /* ======= KONFIG ======= */
-const PRICE = 5;                                   // pris per lykta
-const WA_NUMBER = "358505298881";                  // endast siffror
+const PRICE = 5;
+const WA_NUMBER = "358505298881";
 const EMAIL_ADDRESS = "martin.tylli@anvianet.fi";
 
-// Google Apps Script endpoint + hemlighet
-const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwlTlLZZ7pPDaRbYvI6N3sM3MZRNnBq7htB2EZVOl_jRKKDl89PE0ssYbJNvHknpqjv/exec"; // <-- BYT TILL DIN /exec-URL
+// BYT till din /exec-URL:
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwlTlLZZ7pPDaRbYvI6N3sM3MZRNnBq7htB2EZVOl_jRKKDl89PE0ssYbJNvHknpqjv/exec";
 const GAS_SECRET   = "jakobstad";
 
 // Färger (måste matcha GAS.COLORS och kolumnordning i arket)
@@ -294,38 +287,44 @@ document.querySelectorAll(".ship-option").forEach(el=>{
   });
 });
 
+/* ======= Plain text-meddelande ======= */
 function buildMessage(){
-  const q = totalQty(), lines = [
-    "Hej Lukas! 👋",
-    `Totalt antal: ${q} st`,
-    "", "Önskade färger:"
-  ];
-  for (const [c, n] of Object.entries(state)) if (n > 0) lines.push(`• ${c}: ${n} st`);
-  if (shipping.type === "delivery" && addressI && addressI.value.trim()) {
-    lines.push("", `Leveransadress: ${addressI.value.trim()}`);
+  const q = totalQty();
+  const lines = [];
+
+  lines.push("Hej Lukas!");
+  lines.push(`Totalt antal: ${q} st`);
+  lines.push("");
+  lines.push("Önskade färger:");
+  for (const [c, n] of Object.entries(state)) {
+    if (n > 0) lines.push(`- ${c}: ${n} st`);
   }
-  lines.push(
-    "",
-    `Pris: ${PRICE} € / st`,
-    `Frakt: ${shipping.price} € (${shipping.type==="pickup"?"Hämtning":"Leverans"})`,
-    `Summa: ${q*PRICE + shipping.price} €`,
-    nameI.value ? `Namn: ${nameI.value}` : "",
-    note.value ? `Meddelande: ${note.value}` : "",
-    "",
-    "Leverans eller avhämtning bestäms i chatten. 🕯️",
-    "Skickat via hemsidan ✅"
-  );
-  return lines.filter(Boolean).join("\n");
+
+  if (shipping.type === "delivery" && addressI && addressI.value.trim()) {
+    lines.push("");
+    lines.push(`Leveransadress: ${addressI.value.trim()}`);
+  }
+
+  lines.push("");
+  lines.push(`Pris: ${PRICE} € / st`);
+  lines.push(`Frakt: ${shipping.price} € (${shipping.type === "pickup" ? "Hämtning" : "Leverans"})`);
+  lines.push(`Summa: ${q*PRICE + shipping.price} €`);
+  if (nameI.value) lines.push(`Namn: ${nameI.value}`);
+  if (note.value) lines.push(`Meddelande: ${note.value}`);
+  lines.push("");
+  lines.push("Leverans eller avhämtning bestäms i chatten.");
+  lines.push("Skickat via hemsidan");
+
+  return lines.join("\n");
 }
 
 function buildPayload(channel, waText){
   const q = totalQty();
   return {
     secret: GAS_SECRET,
-    channel,                 // 'whatsapp' | 'email' (sparas ej i kolumn nu, men bra för framtiden om du vill)
-    waText,                  // hela meddelandet (läggs i kolumn P i GAS)
+    channel,                 // 'whatsapp' | 'email'
+    waText,                  // hela meddelandet (sparas i kolumn Q)
     totalQty: q,
-    subtotal: q * PRICE,     // (används ej i nuvarande ark, men kvar om du vill räkna i GAS)
     shipping: { type: shipping.type, price: shipping.price },
     total: q * PRICE + shipping.price,
     name: nameI.value || "",
@@ -337,7 +336,7 @@ function buildPayload(channel, waText){
   };
 }
 
-/* ======= Logga till Sheets (fetch + osynlig fallback-form) ======= */
+/* ======= Logga till Sheets (fetch + fallback) ======= */
 function logOrderToSheet(payload){
   // 1) JSON-försök
   try{
@@ -410,8 +409,8 @@ document.getElementById("waBtn").addEventListener("click", ()=>{
   if (totalQty() < 1) return;
   const msg = buildMessage();
   const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
-  window.location.href = url;                 // öppna WA först (säker popup)
-  setTimeout(()=> {                           // logga efter 300 ms
+  window.location.href = url;       // öppna WA (säker)
+  setTimeout(()=> {                 // logga efter 300 ms
     logOrderToSheet(buildPayload('whatsapp', msg));
     resetForm();
   }, 300);
