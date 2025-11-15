@@ -12,13 +12,12 @@
       --bg:#0b1220;
       --ink:#ffffff;
       --muted:#9ca3af;
-      --card-bg:rgba(255,255,255,0.05);
-      --card-brd:rgba(255,255,255,0.1);
+      --card-bg:rgba(255,255,255,0.06);
+      --card-brd:rgba(255,255,255,0.12);
       --shadow:0 10px 30px rgba(0,0,0,.35);
       --radius:16px;
       --num:#ffffff;
       --btn-wa:#22c55e;
-      --btn-mail:#fbbf24;
     }
 
     @media (prefers-color-scheme: light){
@@ -32,6 +31,8 @@
       }
     }
 
+    *{box-sizing:border-box;}
+
     body{
       margin:0;
       background:var(--bg);
@@ -42,7 +43,18 @@
     .wrap{
       max-width:980px;
       margin:0 auto;
-      padding:20px;
+      padding:20px 16px 40px;
+    }
+
+    h1,h2{
+      margin:0 0 10px;
+      text-align:center;
+    }
+
+    .lead{
+      text-align:center;
+      color:var(--muted);
+      margin-bottom:10px;
     }
 
     .card{
@@ -54,26 +66,66 @@
       box-shadow:var(--shadow);
     }
 
-    h1, h2{
-      margin:0 0 10px;
-      text-align:center;
-    }
-
-    /* ===== Bilder ===== */
+    /* ===== Karusell ===== */
     .carousel{
-      width:100%;
-      max-width:600px;
+      position:relative;
+      max-width:640px;
       margin:0 auto;
       overflow:hidden;
       border-radius:var(--radius);
+      background:#000;
+      aspect-ratio:3/4;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .carousel img{
       width:100%;
+      height:100%;
+      object-fit:cover;
       display:block;
     }
 
-    /* ===== Beställning ===== */
+    .carousel-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      border:none;
+      background:rgba(0,0,0,0.55);
+      color:#fff;
+      font-size:22px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .carousel-btn.prev{ left:10px; }
+    .carousel-btn.next{ right:10px; }
+
+    .dots{
+      position:absolute;
+      bottom:8px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:6px;
+    }
+    .dot{
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.4);
+    }
+    .dot.active{
+      width:18px;
+      background:#fff;
+    }
+
+    /* ===== Form ===== */
     label{
       font-weight:700;
       display:block;
@@ -84,8 +136,10 @@
       width:100%;
       padding:12px;
       border-radius:12px;
-      border:1px solid #ccc;
+      border:1px solid #4b5563;
       font-size:16px;
+      background:rgba(15,23,42,0.9);
+      color:var(--ink);
     }
 
     textarea{
@@ -99,7 +153,7 @@
     }
 
     .color-row{
-      background:rgba(255,255,255,0.08);
+      background:rgba(15,23,42,0.9);
       padding:14px;
       border-radius:14px;
       display:flex;
@@ -107,10 +161,9 @@
       align-items:center;
     }
 
-    /* ==== Långa färgnamn snyggare ==== */
     .color-name{
       font-weight:600;
-      max-width:130px;
+      max-width:140px;
       white-space:normal;
       word-break:break-word;
       line-height:1.25;
@@ -157,7 +210,6 @@
       margin-top:16px;
       display:flex;
       justify-content:center;
-      gap:14px;
     }
 
     .btn{
@@ -168,31 +220,35 @@
       cursor:pointer;
       font-size:18px;
       color:#000;
+      background:var(--btn-wa);
     }
 
-    .btn-wa{ background:var(--btn-wa); }
-    .btn-mail{ background:var(--btn-mail); }
+    .note-text{
+      text-align:center;
+      color:var(--muted);
+      margin-top:12px;
+      font-size:14px;
+    }
   </style>
 </head>
 <body>
 
 <div class="wrap">
-
   <h1>Lukas säljer ljuslyktor</h1>
+  <p class="lead">3D-printade ljuslyktor för LED-ljus – perfekt som gåva eller till ditt eget hem.</p>
 
-  <!-- Bilder -->
-  <div class="carousel card">
-    <img src="silver.jpg" alt="Silver lykta">
-    <img src="grå.jpg" alt="Grå lykta">
-    <img src="grön.jpg" alt="Grön lykta">
-    <img src="röd.jpg" alt="Röd lykta">
-    <img src="vit.jpg" alt="Vit lykta">
-    <img src="lysande.jpg" alt="lysande">
-  </div>
+  <!-- ===== K A R U S E L L ===== -->
+  <section class="card">
+    <div class="carousel" id="carousel">
+      <button class="carousel-btn prev" id="prevBtn" aria-label="Föregående bild">❮</button>
+      <img id="carouselImg" src="silver.jpg" alt="Silver lykta">
+      <button class="carousel-btn next" id="nextBtn" aria-label="Nästa bild">❯</button>
+      <div class="dots" id="dots"></div>
+    </div>
+  </section>
 
-  <!-- Beställningsformulär -->
-  <div class="card">
-
+  <!-- ===== B E S T Ä L L N I N G ===== -->
+  <section class="card">
     <h2>Beställning</h2>
 
     <label>Totalt antal</label>
@@ -201,25 +257,79 @@
     <label>Färg & antal</label>
     <div class="color-list" id="colorList"></div>
 
-    <label>Ditt namn</label>
+    <label for="name">Ditt namn</label>
     <input id="name" type="text" placeholder="Frivilligt">
 
-    <label>Meddelande</label>
-    <textarea id="note" placeholder="Frivilligt"></textarea>
+    <label for="note">Meddelande</label>
+    <textarea id="note" placeholder="Önskemål eller avhämtningstid – frivilligt"></textarea>
 
     <div class="actions">
-      <button class="btn btn-wa" id="waBtn">WhatsApp</button>
+      <button class="btn" id="waBtn">Beställ via WhatsApp</button>
     </div>
 
-  </div>
-
+    <p class="note-text">
+      När du trycker på knappen öppnas WhatsApp med ett färdigt meddelande – du behöver bara skicka.
+    </p>
+  </section>
 </div>
 
 <script>
 /* ======= KONFIG ======= */
 const WA_NUMBER = "358505298881";
 
-/* ======= Färger ======= */
+/* ======= BILDKARUSELL ======= */
+const images = [
+  { src: "silver.jpg",            alt: "Silver lykta" },
+  { src: "grå.jpg",               alt: "Grå lykta" },
+  { src: "grön.jpg",              alt: "Grön lykta" },
+  { src: "röd.jpg",               alt: "Röd lykta" },
+  { src: "vit.jpg",               alt: "Vit lykta" },
+  { src: "självlysande grön.jpg", alt: "Självlysande grön lykta" }
+];
+
+const imgEl   = document.getElementById("carouselImg");
+const dotsBox = document.getElementById("dots");
+let slideIdx  = 0;
+
+function renderDots(){
+  dotsBox.innerHTML = "";
+  images.forEach((_, i)=>{
+    const d = document.createElement("div");
+    d.className = "dot" + (i===0 ? " active" : "");
+    d.addEventListener("click", ()=>showSlide(i));
+    dotsBox.appendChild(d);
+  });
+}
+function showSlide(i){
+  slideIdx = (i + images.length) % images.length;
+  imgEl.src = images[slideIdx].src;
+  imgEl.alt = images[slideIdx].alt;
+  Array.from(dotsBox.children).forEach((el,idx)=>{
+    el.classList.toggle("active", idx === slideIdx);
+  });
+}
+
+document.getElementById("prevBtn").addEventListener("click", ()=>showSlide(slideIdx-1));
+document.getElementById("nextBtn").addEventListener("click", ()=>showSlide(slideIdx+1));
+
+// Swipe på mobilen
+let startX = 0;
+const carousel = document.getElementById("carousel");
+carousel.addEventListener("touchstart", e=>{
+  startX = e.touches[0].clientX;
+},{passive:true});
+carousel.addEventListener("touchend", e=>{
+  const dx = e.changedTouches[0].clientX - startX;
+  if (Math.abs(dx) > 40){
+    if (dx < 0) showSlide(slideIdx+1);
+    else showSlide(slideIdx-1);
+  }
+},{passive:true});
+
+renderDots();
+showSlide(0);
+
+/* ======= FÄRGER & ANTAL ======= */
 const COLORS = [
   "Silver",
   "Grå",
@@ -235,7 +345,7 @@ const totalQtyEl = document.getElementById("totalQty");
 
 function renderColors(){
   colorList.innerHTML = "";
-  COLORS.forEach(color => {
+  COLORS.forEach(color=>{
     const row = document.createElement("div");
     row.className = "color-row";
     row.innerHTML = `
@@ -244,13 +354,22 @@ function renderColors(){
         <button class="mini-btn" data-act="minus">−</button>
         <input class="mini-input" type="text" value="${state[color]}" readonly>
         <button class="mini-btn" data-act="plus">+</button>
-      </div>`;
+      </div>
+    `;
     const input = row.querySelector(".mini-input");
     const minus = row.querySelector('[data-act="minus"]');
     const plus  = row.querySelector('[data-act="plus"]');
 
-    minus.onclick = () => { state[color] = Math.max(0, state[color]-1); input.value = state[color]; updateTotals(); };
-    plus.onclick  = () => { state[color] = state[color]+1; input.value = state[color]; updateTotals(); };
+    minus.onclick = ()=>{
+      state[color] = Math.max(0, state[color]-1);
+      input.value = state[color];
+      updateTotals();
+    };
+    plus.onclick = ()=>{
+      state[color] = state[color]+1;
+      input.value = state[color];
+      updateTotals();
+    };
 
     colorList.appendChild(row);
   });
@@ -259,30 +378,34 @@ function renderColors(){
 function totalQty(){
   return Object.values(state).reduce((a,b)=>a+b,0);
 }
-
 function updateTotals(){
   totalQtyEl.textContent = `${totalQty()} st`;
 }
 
-document.getElementById("waBtn").onclick = () => {
-  const name = document.getElementById("name").value;
-  const note = document.getElementById("note").value;
-
-  let msg = `Hej! Jag vill beställa ljuslyktor.%0A%0A`;
-  msg += `Totalt: ${totalQty()} st%0A%0A`;
-
-  msg += `Färger:%0A`;
-  for(const [c,n] of Object.entries(state)){
-    if(n>0) msg += `- ${c}: ${n} st%0A`;
+/* ======= WHATSAPP ======= */
+document.getElementById("waBtn").addEventListener("click", ()=>{
+  const q = totalQty();
+  if (q < 1){
+    alert("Välj minst en lykta.");
+    return;
   }
+  const name = document.getElementById("name").value.trim();
+  const note = document.getElementById("note").value.trim();
 
-  if(name) msg += `%0AName: ${name}`;
-  if(note) msg += `%0AMeddelande: ${note}`;
+  let msg = "Hej! Jag vill beställa ljuslyktor.%0A%0A";
+  msg += `Totalt: ${q} st%0A%0A`;
+  msg += "Färger:%0A";
+  for(const [c,n] of Object.entries(state)){
+    if (n>0) msg += `- ${c}: ${n} st%0A`;
+  }
+  if (name) msg += `%0ANamn: ${name}`;
+  if (note) msg += `%0AMeddelande: ${note}`;
 
-  window.location.href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
-};
+  const url = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+  window.location.href = url;
+});
 
-/* Init */
+/* init */
 renderColors();
 updateTotals();
 </script>
