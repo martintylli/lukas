@@ -4,332 +4,351 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lukas Ljuslyktor</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
+  <meta name="color-scheme" content="light dark" />
   <style>
     :root{
-      --bg:#0b1220;
-      --ink:#ffffff;
+      --bg:linear-gradient(135deg,#020617 0%,#020617 40%,#020617 100%);
+      --ink:#e5e7eb;
       --muted:#9ca3af;
-      --card-bg:rgba(255,255,255,0.06);
-      --card-brd:rgba(255,255,255,0.12);
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --radius:16px;
-      --num:#ffffff;
-      --btn-wa:#22c55e;
+      --card-bg:#020617;
+      --card-brd:#111827;
+      --wa:#22c55e;
+      --pill-bg:#020617;
+      --pill-brd:#1e293b;
+      --shadow:0 18px 40px rgba(0,0,0,.45);
+      --radius:22px;
     }
-
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f9fafb;
-        --ink:#111827;
-        --muted:#6b7280;
-        --card-bg:#ffffff;
-        --card-brd:#e5e7eb;
-        --num:#000;
-      }
-    }
-
-    *{box-sizing:border-box;}
-
+    *{box-sizing:border-box}
     body{
       margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
       background:var(--bg);
-      font-family:Inter, system-ui, sans-serif;
       color:var(--ink);
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
     }
-
+    header{
+      text-align:center;
+      padding:28px 16px 18px;
+    }
+    h1{
+      margin:0 0 6px;
+      font-size:clamp(26px,4.2vw,36px);
+    }
+    p.lead{
+      margin:0 auto;
+      max-width:780px;
+      color:var(--muted);
+      font-size:15px;
+    }
     .wrap{
       max-width:980px;
       margin:0 auto;
-      padding:20px 16px 40px;
+      padding:8px 16px 40px;
     }
-
-    h1,h2{
-      margin:0 0 10px;
-      text-align:center;
-    }
-
-    .lead{
-      text-align:center;
-      color:var(--muted);
-      margin-bottom:10px;
-    }
-
     .card{
+      backdrop-filter:blur(10px);
       background:var(--card-bg);
       border:1px solid var(--card-brd);
       border-radius:var(--radius);
-      padding:20px;
-      margin-top:20px;
       box-shadow:var(--shadow);
+      padding:20px;
+      margin:18px auto;
     }
 
-    /* ===== Karusell ===== */
+    /* Karusell – enkel men robust */
     .carousel{
       position:relative;
-      max-width:640px;
-      margin:0 auto;
+      width:100%;
+      max-width:560px;
+      margin:6px auto 0;
       overflow:hidden;
-      border-radius:var(--radius);
-      background:#000;
+      border-radius:24px;
+      background:#020617;
+      border:1px solid #111827;
       aspect-ratio:3/4;
       display:flex;
       align-items:center;
       justify-content:center;
     }
-
     .carousel img{
       width:100%;
       height:100%;
       object-fit:cover;
       display:block;
     }
-
-    .carousel-btn{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      width:40px;
-      height:40px;
-      border-radius:999px;
-      border:none;
-      background:rgba(0,0,0,0.55);
-      color:#fff;
-      font-size:22px;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .carousel-btn.prev{ left:10px; }
-    .carousel-btn.next{ right:10px; }
-
     .dots{
-      position:absolute;
-      bottom:8px;
-      left:50%;
-      transform:translateX(-50%);
       display:flex;
-      gap:6px;
+      justify-content:center;
+      gap:8px;
+      margin-top:10px;
     }
     .dot{
-      width:7px;
-      height:7px;
+      width:8px;
+      height:8px;
       border-radius:999px;
-      background:rgba(255,255,255,0.4);
+      background:#4b5563;
+      cursor:pointer;
     }
     .dot.active{
-      width:18px;
-      background:#fff;
+      width:22px;
+      background:#facc15;
     }
 
-    /* ===== Form ===== */
+    /* Form */
     label{
       font-weight:700;
-      display:block;
-      margin-bottom:6px;
+      font-size:15px;
     }
-
     input[type="text"], textarea{
       width:100%;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid #4b5563;
-      font-size:16px;
-      background:rgba(15,23,42,0.9);
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid #1f2937;
+      background:#020617;
       color:var(--ink);
+      font-size:16px;
+    }
+    input::placeholder, textarea::placeholder{
+      color:#4b5563;
+    }
+    textarea{
+      min-height:82px;
+      resize:vertical;
     }
 
-    textarea{
-      min-height:80px;
+    .order-top{
+      padding:14px 16px;
+      border-radius:18px;
+      background:#0b1120;
+      border:1px solid #111827;
+      margin-bottom:16px;
+    }
+    .order-top h2{
+      margin:0 0 6px;
+      font-size:22px;
+      text-align:left;
+    }
+    #totalQty{
+      font-size:26px;
+      font-weight:800;
+      margin-top:2px;
     }
 
     .color-list{
       display:flex;
       flex-direction:column;
-      gap:14px;
+      gap:10px;
+      margin-top:6px;
     }
-
     .color-row{
-      background:rgba(15,23,42,0.9);
-      padding:14px;
-      border-radius:14px;
       display:flex;
       justify-content:space-between;
       align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      background:#020617;
+      border:1px solid #111827;
     }
-
     .color-name{
       font-weight:600;
-      max-width:140px;
-      white-space:normal;
-      word-break:break-word;
-      line-height:1.25;
+      white-space:nowrap;     /* alla EN rad som standard */
+    }
+    .color-name.long{
+      white-space:normal;     /* endast Självlysande grön får brytas */
+      max-width:120px;
+      line-height:1.2;
     }
 
     .qty-mini{
       display:flex;
       align-items:center;
-      gap:8px;
+      gap:6px;
     }
-
     .mini-btn{
-      width:38px;
-      height:38px;
-      border-radius:10px;
-      border:none;
-      background:#fff;
+      width:40px;
+      height:40px;
+      border-radius:14px;
+      border:0;
+      background:#f9fafb;
+      color:#020617;
       font-size:22px;
       font-weight:800;
       cursor:pointer;
-      color:#000;
     }
-
     .mini-input{
-      width:56px;
-      height:38px;
+      width:78px;
       text-align:center;
-      border-radius:10px;
-      border:none;
+      padding:10px 8px;
+      border-radius:14px;
+      border:0;
+      background:#020617;
+      color:#f9fafb;
       font-size:18px;
-      background:#fff;
-      color:#000;
       font-weight:700;
     }
 
-    #totalQty{
-      margin-bottom:10px;
-      font-size:20px;
+    .ship-row{
+      display:flex;
+      gap:10px;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    .ship-option{
+      flex:1;
+      padding:10px 12px;
+      border-radius:16px;
+      border:2px solid #1f2937;
+      background:#020617;
+      text-align:center;
+      cursor:pointer;
+      font-weight:700;
+      font-size:15px;
+    }
+    .ship-option.active{
+      border-color:#22c55e;
+      background:#022c22;
+      color:#bbf7d0;
+    }
+
+    .price-line{
+      text-align:center;
+      margin-top:10px;
       font-weight:800;
-      color:var(--num);
+      background:#020617;
+      border:2px solid #1f2937;
+      display:inline-block;
+      padding:10px 20px;
+      border-radius:999px;
+      font-size:17px;
     }
 
     .actions{
-      margin-top:16px;
       display:flex;
       justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
     }
-
     .btn{
-      padding:14px 22px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:12px 22px;
       border-radius:999px;
       border:none;
-      font-weight:800;
       cursor:pointer;
-      font-size:18px;
-      color:#000;
-      background:var(--btn-wa);
+      font-weight:800;
+      box-shadow:var(--shadow);
+      font-size:16px;
+    }
+    .btn-wa{
+      background:var(--wa);
+      color:#022c22;
+    }
+    .btn-wa:disabled{
+      opacity:.4;
+      cursor:not-allowed;
+      box-shadow:none;
     }
 
-    .note-text{
+    .row{margin-top:14px}
+    footer{
       text-align:center;
       color:var(--muted);
-      margin-top:12px;
-      font-size:14px;
+      padding:20px 0 40px;
+      font-size:13px;
     }
   </style>
 </head>
 <body>
+<header>
+  <h1>Lukas säljer ljuslyktor</h1>
+  <p class="lead">
+    3D-printade lyktor för LED-ljus – ca 12&nbsp;cm höga – perfekta som present eller till eget mys 💡
+  </p>
+</header>
 
 <div class="wrap">
-  <h1>Lukas säljer ljuslyktor</h1>
-  <p class="lead">3D-printade ljuslyktor för LED-ljus – perfekt som gåva eller till ditt eget hem.</p>
 
-  <!-- ===== K A R U S E L L ===== -->
-  <section class="card">
-    <div class="carousel" id="carousel">
-      <button class="carousel-btn prev" id="prevBtn" aria-label="Föregående bild">❮</button>
-      <img id="carouselImg" src="silver.jpg" alt="Silver lykta">
-      <button class="carousel-btn next" id="nextBtn" aria-label="Nästa bild">❯</button>
-      <div class="dots" id="dots"></div>
+  <!-- BILDKARUSELL -->
+  <section class="card" style="max-width:680px;">
+    <div class="carousel">
+      <img id="carousel-image" src="silver.jpg" alt="Ljuslykta">
     </div>
+    <div class="dots" id="dots"></div>
   </section>
 
-  <!-- ===== B E S T Ä L L N I N G ===== -->
-  <section class="card">
-    <h2>Beställning</h2>
-
-    <label>Totalt antal</label>
-    <div id="totalQty">0 st</div>
-
-    <label>Färg & antal</label>
-    <div class="color-list" id="colorList"></div>
-
-    <label for="name">Ditt namn</label>
-    <input id="name" type="text" placeholder="Frivilligt">
-
-    <label for="note">Meddelande</label>
-    <textarea id="note" placeholder="Önskemål eller avhämtningstid – frivilligt"></textarea>
-
-    <div class="actions">
-      <button class="btn" id="waBtn">Beställ via WhatsApp</button>
+  <!-- BESTÄLLNING -->
+  <section class="card" style="max-width:640px;">
+    <div class="order-top">
+      <h2>Beställning</h2>
+      <label>Totalt antal</label>
+      <div id="totalQty">0 st</div>
     </div>
 
-    <p class="note-text">
+    <div class="row">
+      <label>Färg & antal</label>
+      <div id="colorList" class="color-list"></div>
+    </div>
+
+    <div class="row">
+      <label>Leverans eller hämtning</label>
+      <div class="ship-row">
+        <div class="ship-option active" data-type="pickup" data-price="0">Hämtning (0 €)</div>
+        <div class="ship-option" data-type="delivery" data-price="10">Leverans (10 €)</div>
+      </div>
+    </div>
+
+    <div class="row" id="addressRow" style="display:none">
+      <label for="address">Leveransadress</label>
+      <input id="address" type="text" placeholder="Gatuadress, postnummer och ort" />
+    </div>
+
+    <div class="row">
+      <label for="name">Ditt namn</label>
+      <input id="name" type="text" placeholder="Frivilligt" />
+    </div>
+
+    <div class="row">
+      <label for="note">Meddelande</label>
+      <textarea id="note" placeholder="Önskemål eller avhämtningstid – frivilligt"></textarea>
+    </div>
+
+    <div style="text-align:center">
+      <span class="price-line" id="priceTag">Summa: –</span>
+    </div>
+
+    <div class="actions">
+      <button id="waBtn" class="btn btn-wa" disabled>Beställ via WhatsApp</button>
+    </div>
+
+    <p style="text-align:center;color:var(--muted);margin-top:10px;font-size:13px">
       När du trycker på knappen öppnas WhatsApp med ett färdigt meddelande – du behöver bara skicka.
+    </p>
+  </section>
+
+  <section class="card" style="max-width:720px; text-align:center">
+    <h2 style="margin:0 0 8px">Om Lukas</h2>
+    <p style="margin:0; color:var(--muted); font-size:14px">
+      Jag 3D-printar varje lykta i PLA-material här i Finland.  
+      Lyktorna är gjorda för LED-ljus och ger ett varmt, mysigt sken – säkra och stämningsfulla.
     </p>
   </section>
 </div>
 
+<footer>© 2025 Lukas · 3D-printade ljuslyktor</footer>
+
 <script>
-/* ======= KONFIG ======= */
-const WA_NUMBER = "358505298881";
+/* === KONFIG === */
+const PRICE = 5;                         // pris per lykta
+const WA_NUMBER = "358505298881";        // endast siffror
 
-/* ======= BILDKARUSELL ======= */
-const images = [
-  { src: "silver.jpg",            alt: "Silver lykta" },
-  { src: "grå.jpg",               alt: "Grå lykta" },
-  { src: "grön.jpg",              alt: "Grön lykta" },
-  { src: "röd.jpg",               alt: "Röd lykta" },
-  { src: "vit.jpg",               alt: "Vit lykta" },
-  { src: "lysande.jpg", alt: "lysande" }
-];
-
-const imgEl   = document.getElementById("carouselImg");
-const dotsBox = document.getElementById("dots");
-let slideIdx  = 0;
-
-function renderDots(){
-  dotsBox.innerHTML = "";
-  images.forEach((_, i)=>{
-    const d = document.createElement("div");
-    d.className = "dot" + (i===0 ? " active" : "");
-    d.addEventListener("click", ()=>showSlide(i));
-    dotsBox.appendChild(d);
-  });
-}
-function showSlide(i){
-  slideIdx = (i + images.length) % images.length;
-  imgEl.src = images[slideIdx].src;
-  imgEl.alt = images[slideIdx].alt;
-  Array.from(dotsBox.children).forEach((el,idx)=>{
-    el.classList.toggle("active", idx === slideIdx);
-  });
-}
-
-document.getElementById("prevBtn").addEventListener("click", ()=>showSlide(slideIdx-1));
-document.getElementById("nextBtn").addEventListener("click", ()=>showSlide(slideIdx+1));
-
-// Swipe på mobilen
-let startX = 0;
-const carousel = document.getElementById("carousel");
-carousel.addEventListener("touchstart", e=>{
-  startX = e.touches[0].clientX;
-},{passive:true});
-carousel.addEventListener("touchend", e=>{
-  const dx = e.changedTouches[0].clientX - startX;
-  if (Math.abs(dx) > 40){
-    if (dx < 0) showSlide(slideIdx+1);
-    else showSlide(slideIdx-1);
-  }
-},{passive:true});
-
-renderDots();
-showSlide(0);
-
-/* ======= FÄRGER & ANTAL ======= */
+// Färger (visas i listan)
 const COLORS = [
   "Silver",
   "Grå",
@@ -339,37 +358,84 @@ const COLORS = [
   "Självlysande grön"
 ];
 
+/* === KARUSELL === */
+const images = [
+  { src: "silver.jpg",   alt: "Silver lykta" },
+  { src: "grå.jpg",      alt: "Grå lykta" },
+  { src: "grön.jpg",     alt: "Grön lykta" },
+  { src: "röd.jpg",      alt: "Röd lykta" },
+  { src: "vit.jpg",      alt: "Vit lykta" },
+  { src: "lysande.jpg",  alt: "Självlysande grön lykta" }
+];
+
+const imgEl = document.getElementById("carousel-image");
+const dotsBox = document.getElementById("dots");
+let slideIndex = 0;
+
+images.forEach((_, i) => {
+  const d = document.createElement("div");
+  d.className = "dot" + (i === 0 ? " active" : "");
+  d.addEventListener("click", () => showSlide(i));
+  dotsBox.appendChild(d);
+});
+const dots = dotsBox.querySelectorAll(".dot");
+
+function showSlide(i){
+  slideIndex = (i + images.length) % images.length;
+  imgEl.src = images[slideIndex].src;
+  imgEl.alt = images[slideIndex].alt;
+  dots.forEach((dot, idx) => dot.classList.toggle("active", idx === slideIndex));
+}
+
+setInterval(() => showSlide(slideIndex + 1), 5000);
+
+/* === ORDERSTATE === */
 const state = Object.fromEntries(COLORS.map(c => [c, 0]));
-const colorList = document.getElementById("colorList");
-const totalQtyEl = document.getElementById("totalQty");
+let shipping = { type: "pickup", price: 0 };
+
+const colorList   = document.getElementById("colorList");
+const totalQtyEl  = document.getElementById("totalQty");
+const priceEl     = document.getElementById("priceTag");
+const waBtn       = document.getElementById("waBtn");
+const addressRow  = document.getElementById("addressRow");
+const addressI    = document.getElementById("address");
+const nameI       = document.getElementById("name");
+const noteI       = document.getElementById("note");
 
 function renderColors(){
   colorList.innerHTML = "";
-  COLORS.forEach(color=>{
+  COLORS.forEach(color => {
     const row = document.createElement("div");
     row.className = "color-row";
+    const longClass = (color === "Självlysande grön") ? "long" : "";
     row.innerHTML = `
-      <span class="color-name">${color}</span>
+      <span class="color-name ${longClass}">${color}</span>
       <div class="qty-mini">
-        <button class="mini-btn" data-act="minus">−</button>
-        <input class="mini-input" type="text" value="${state[color]}" readonly>
-        <button class="mini-btn" data-act="plus">+</button>
+        <button class="mini-btn" data-act="minus" aria-label="Minska ${color}">−</button>
+        <input class="mini-input" type="number" min="0" max="99" inputmode="numeric" value="${state[color]}">
+        <button class="mini-btn" data-act="plus" aria-label="Öka ${color}">+</button>
       </div>
     `;
     const input = row.querySelector(".mini-input");
     const minus = row.querySelector('[data-act="minus"]');
     const plus  = row.querySelector('[data-act="plus"]');
 
-    minus.onclick = ()=>{
-      state[color] = Math.max(0, state[color]-1);
+    function clamp(v){
+      v = Number.isFinite(v) ? v : 0;
+      return Math.max(0, Math.min(99, v));
+    }
+    function set(v){
+      state[color] = clamp(v);
       input.value = state[color];
       updateTotals();
-    };
-    plus.onclick = ()=>{
-      state[color] = state[color]+1;
-      input.value = state[color];
-      updateTotals();
-    };
+    }
+
+    minus.addEventListener("click", () => set(state[color] - 1));
+    plus .addEventListener("click", () => set(state[color] + 1));
+    input.addEventListener("input", () => {
+      const n = parseInt(input.value, 10);
+      set(n);
+    });
 
     colorList.appendChild(row);
   });
@@ -379,29 +445,61 @@ function totalQty(){
   return Object.values(state).reduce((a,b)=>a+b,0);
 }
 function updateTotals(){
-  totalQtyEl.textContent = `${totalQty()} st`;
+  const q = totalQty();
+  totalQtyEl.textContent = `${q} st`;
+  const totalPrice = q * PRICE + shipping.price;
+  priceEl.textContent = q ? `Summa: ${totalPrice} €` : "Summa: –";
+  waBtn.disabled = q < 1;
 }
 
-/* ======= WHATSAPP ======= */
-document.getElementById("waBtn").addEventListener("click", ()=>{
+/* Shipping-val */
+document.querySelectorAll(".ship-option").forEach(el=>{
+  el.addEventListener("click", ()=>{
+    document.querySelectorAll(".ship-option").forEach(x=>x.classList.remove("active"));
+    el.classList.add("active");
+    shipping = { type: el.dataset.type, price: Number(el.dataset.price) || 0 };
+    const isDelivery = (shipping.type === "delivery");
+    addressRow.style.display = isDelivery ? "block" : "none";
+    if (!isDelivery && addressI) addressI.value = "";
+    updateTotals();
+  });
+});
+
+/* Meddelande till WhatsApp */
+function buildMessage(){
   const q = totalQty();
-  if (q < 1){
-    alert("Välj minst en lykta.");
-    return;
-  }
-  const name = document.getElementById("name").value.trim();
-  const note = document.getElementById("note").value.trim();
+  const lines = [];
 
-  let msg = "Hej! Jag vill beställa ljuslyktor.%0A%0A";
-  msg += `Totalt: ${q} st%0A%0A`;
-  msg += "Färger:%0A";
-  for(const [c,n] of Object.entries(state)){
-    if (n>0) msg += `- ${c}: ${n} st%0A`;
+  lines.push("Hej Lukas!");
+  lines.push(`Totalt antal: ${q} st`);
+  lines.push("");
+  lines.push("Önskade färger:");
+  for (const [color, qty] of Object.entries(state)) {
+    if (qty > 0) lines.push(`- ${color}: ${qty} st`);
   }
-  if (name) msg += `%0ANamn: ${name}`;
-  if (note) msg += `%0AMeddelande: ${note}`;
 
-  const url = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+  if (shipping.type === "delivery" && addressI && addressI.value.trim()){
+    lines.push("");
+    lines.push(`Leveransadress: ${addressI.value.trim()}`);
+  }
+
+  lines.push("");
+  lines.push(`Pris: ${PRICE} € / st`);
+  lines.push(`Frakt: ${shipping.price} € (${shipping.type === "pickup" ? "Hämtning" : "Leverans"})`);
+  lines.push(`Summa: ${q * PRICE + shipping.price} €`);
+  if (nameI.value.trim()) lines.push(`Namn: ${nameI.value.trim()}`);
+  if (noteI.value.trim()) lines.push(`Meddelande: ${noteI.value.trim()}`);
+  lines.push("");
+  lines.push("Skickat via hemsidan");
+
+  return lines.join("\n");
+}
+
+/* Skicka via WhatsApp */
+waBtn.addEventListener("click", ()=>{
+  if (totalQty() < 1) return;
+  const msg = buildMessage();
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.location.href = url;
 });
 
@@ -409,7 +507,5 @@ document.getElementById("waBtn").addEventListener("click", ()=>{
 renderColors();
 updateTotals();
 </script>
-
 </body>
 </html>
-
